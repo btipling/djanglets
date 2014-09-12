@@ -1,5 +1,5 @@
 var djanglates = require("./djanglates"),
-    filename = "foo.txt",
+    filename = "foo.html",
     contents,
     parsed,
     fs = require("fs");

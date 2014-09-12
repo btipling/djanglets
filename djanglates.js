@@ -72,30 +72,60 @@
   }
 */
 var parser = (function(){
-var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,4],$V1=[5,7];
+var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,11],$V1=[1,17],$V2=[6,7,12,13,21,30],$V3=[1,18],$V4=[7,12,13,21,30],$V5=[1,35],$V6=[2,42],$V7=[1,31],$V8=[1,43],$V9=[1,42],$Va=[7,16,18],$Vb=[7,13,16,18],$Vc=[1,51],$Vd=[7,13,21,27];
 var parser = {trace: function trace() { },
 yy: {},
-symbols_: {"error":2,"root":3,"foos":4,"EOF":5,"foo":6,"FOO":7,"$accept":0,"$end":1},
-terminals_: {2:"error",5:"EOF",7:"FOO"},
-productions_: [0,[3,2],[4,1],[4,2],[6,1]],
+symbols_: {"error":2,"root":3,"document":4,"complete_element":5,"EOF":6,"SPACE":7,"open_tag":8,"close_tag":9,"element_content":10,"self_closing_tag":11,"OPEN_TAG":12,"WORD":13,"closing_tag":14,"attributes":15,"TAG_CLOSER":16,"tag_closer":17,"CLOSE_TAG":18,"optional_space":19,"spaces":20,"CONTENT":21,"variable":22,"attribute":23,"EQUAL":24,"quote":25,"attribute_content":26,"QUOTE":27,"non_variable_attr_content":28,"words":29,"OPEN_VAR":30,"CLOSE_VAR":31,"$accept":0,"$end":1},
+terminals_: {2:"error",6:"EOF",7:"SPACE",12:"OPEN_TAG",13:"WORD",16:"TAG_CLOSER",18:"CLOSE_TAG",21:"CONTENT",24:"EQUAL",27:"QUOTE",30:"OPEN_VAR",31:"CLOSE_VAR"},
+productions_: [0,[3,1],[4,0],[4,2],[4,3],[5,2],[5,3],[5,1],[8,3],[8,4],[9,4],[11,4],[11,5],[17,2],[14,1],[14,2],[10,1],[10,1],[10,1],[10,1],[10,1],[10,2],[10,2],[10,2],[10,2],[10,2],[15,1],[15,2],[23,6],[25,1],[26,0],[26,1],[26,1],[28,1],[28,1],[28,1],[28,2],[28,2],[28,2],[29,1],[29,2],[29,2],[19,0],[19,1],[20,1],[20,2],[22,3]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
 var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
- return $$[$0-1] 
+ return "'" + $$[$0] + "'" 
 break;
 case 3:
- this.$ = $$[$0-1] + " " + $$[$0] 
+ this.$ = $$[$0-1] 
 break;
 case 4:
+ this.$ = $$[$0-2] 
+break;
+case 5:
+ this.$ = $$[$0-1] + S2 
+break;
+case 6: case 8:
+ this.$ = $$[$0-2] + $$[$0-1] + $$[$0] 
+break;
+case 7:
  this.$ = $$[$0] 
+break;
+case 9: case 11:
+ this.$ = $$[$0-3] + $$[$0-2] + $$[$0-1] + $$[$0] 
+break;
+case 10:
+ this.$ = $$[$0-3] + $$[$0-2] + $$[$0-1] + $$[$0]
+break;
+case 12:
+ this.$ = $$[$0-4] + $$[$0-3] + $$[$0-2] + $$[$0-1] + $$[$0] 
+break;
+case 13: case 15: case 21: case 22: case 23: case 24: case 25: case 27: case 36: case 37: case 38: case 40: case 41: case 45:
+ this.$ = $$[$0-1] + $$[$0] 
+break;
+case 28:
+ this.$ = $$[$0-5] + $$[$0-4] + $$[$0-3] + $$[$0-2] + $$[$0-1] + $$[$0]
+break;
+case 29:
+ this.$ = '"' 
+break;
+case 46:
+ this.$ = "'+" + $$[$0-1] + "+'" 
 break;
 }
 },
-table: [{3:1,4:2,6:3,7:$V0},{1:[3]},{5:[1,5],6:6,7:$V0},o($V1,[2,2]),o($V1,[2,4]),{1:[2,1]},o($V1,[2,3])],
-defaultActions: {5:[2,1]},
+table: [{1:[2,2],3:1,4:2,5:3,8:4,11:5,12:[1,6]},{1:[3]},{1:[2,1]},{6:[1,7],7:[1,8]},{5:12,7:[1,15],8:4,9:9,10:10,11:5,12:$V0,13:[1,14],21:[1,13],22:16,30:$V1},o($V2,[2,7]),{13:$V3},{1:[2,3]},{6:[1,19]},o($V2,[2,5]),{5:21,7:[1,24],8:4,9:20,11:5,12:$V0,13:[1,23],21:[1,22],22:25,30:$V1},{13:$V3,16:[1,26]},o($V4,[2,16]),o($V4,[2,17]),o($V4,[2,18]),o($V4,[2,19]),o($V4,[2,20]),{13:[1,27]},{7:$V5,14:28,15:29,16:$V6,17:30,18:$V7,19:34,20:32,23:33},{1:[2,4]},o($V2,[2,6]),o($V4,[2,21]),o($V4,[2,22]),o($V4,[2,23]),o($V4,[2,24]),o($V4,[2,25]),{13:[1,36]},{31:[1,37]},o($V4,[2,8]),{7:$V5,14:38,16:$V6,17:39,18:$V7,19:34,20:32,23:40},{18:[1,41]},o($V2,[2,14]),{7:$V8,13:[1,44],16:[2,43],18:$V9},o($Va,[2,26]),{16:[1,45]},o($Vb,[2,44]),{7:$V5,14:46,18:$V7,20:47},o([7,12,13,21,27,30],[2,46]),o($V4,[2,9]),{18:[1,48]},o($Va,[2,27]),o($V2,[2,11]),o($V2,[2,15]),o($Vb,[2,45]),{24:[1,49]},{18:[2,13]},o($V2,[2,10]),{7:$V8,18:$V9},o($V2,[2,12]),{25:50,27:$Vc},{7:[1,57],13:[1,55],21:[1,56],22:54,26:52,27:[2,30],28:53,30:$V1},o([7,13,16,18,21,27,30],[2,29]),{25:58,27:$Vc},{7:[1,61],13:[1,59],21:[1,60],27:[2,31]},{27:[2,32]},o($Vd,[2,33]),o($Vd,[2,34]),o($Vd,[2,35]),o($Va,[2,28]),o($Vd,[2,36]),o($Vd,[2,37]),o($Vd,[2,38])],
+defaultActions: {2:[2,1],7:[2,3],19:[2,4],45:[2,13],54:[2,32]},
 parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -569,18 +599,36 @@ options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:/* skip whitespace */
+case 0:return "SPACE"
 break;
-case 1:return "FOO"
+case 1:return "OPEN_TAG"
 break;
-case 2:return 5
+case 2:return "CLOSE_TAG"
 break;
-case 3:/* Do nothing for everything else */
+case 3:return "TAG_CLOSER"
+break;
+case 4:/* return "COMMENT_BEGIN" */
+break;
+case 5:/* return "COMMENT_BOUNDARY" */
+break;
+case 6:return "QUOTE"
+break;
+case 7:return "EQUAL"
+break;
+case 8:return "OPEN_VAR"
+break;
+case 9:return "CLOSE_VAR"
+break;
+case 10:return "WORD"
+break;
+case 11:return "EOF"
+break;
+case 12:return "CONTENT"
 break;
 }
 },
-rules: [/^(?:\s+)/,/^(?:foo\d\b)/,/^(?:$)/,/^(?:.)/],
-conditions: {"INITIAL":{"rules":[0,1,2,3],"inclusive":true}}
+rules: [/^(?:\s+)/,/^(?:<)/,/^(?:>)/,/^(?:\/)/,/^(?:!)/,/^(?:--)/,/^(?:["\"'"])/,/^(?:=)/,/^(?:\{\{)/,/^(?:\}\})/,/^(?:\w+)/,/^(?:$)/,/^(?:.)/],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12],"inclusive":true}}
 });
 return lexer;
 })();

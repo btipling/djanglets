@@ -1,8 +1,9 @@
-
 %%
 
 root
-  : document { return "'" + $1 + "'" }
+  : document {
+      $$ = $1
+    }
   ;
 
 document
@@ -19,20 +20,23 @@ complete_element
   ;
 
 open_tag
-  : OPEN_TAG WORD CLOSE_TAG -> $$ = $1 + $2 + $3
-  | OPEN_TAG WORD attributes CLOSE_TAG -> $$ = $1 + $2 + $3 + $4
+  : OPEN_TAG WORD CLOSE_TAG -> yy.visitor.visitOpenElement(yy.ast, $2);
+  | OPEN_TAG WORD attributes CLOSE_TAG -> yy.visitor.visitOpenElement(yy.ast, $2);
   ;
 
 close_tag
-  : TAG_CLOSER WORD CLOSE_TAG -> $$ = $1 + $2 + $3
+  : TAG_CLOSER WORD CLOSE_TAG -> yy.visitor.visitCloseElement(yy.ast, $2);
   ;
 
 self_closing_tag
-  : OPEN_TAG WORD SELF_TAG_CLOSER -> $$ = $1 + $2 + $3
+  : OPEN_TAG WORD SELF_TAG_CLOSER {
+      yy.visitor.visitOpenElement(yy.ast, $2);
+      yy.visitor.visitCloseElement(yy.ast, $2);
+    }
   | OPEN_TAG WORD attributes SELF_TAG_CLOSER  {
-                                          $$ = $1 + $2 + $3 + $4
-                                          console.log("self_closing_tag", $$);
-                                        }
+      yy.visitor.visitOpenElement(yy.ast, $2);
+      yy.visitor.visitCloseElement(yy.ast, $2);
+    }
   ;
 
 element_content
@@ -59,9 +63,8 @@ attributes
 
 attribute
   : WORD EQUAL quote attribute_content quote {
-                                                      $$ = $1 + $2 + $3 + $4 + $5
-                                                      console.log("attribute", $$);
-                                                    }
+      yy.visitor.visitAttribute(yy.ast, $1, $4);
+    }
   ;
 
 quote
@@ -90,7 +93,7 @@ words
   ;
 
 variable
-  : OPEN_VAR WORD CLOSE_VAR -> $$ = "'+" + $2 + "+'"
+  : OPEN_VAR WORD CLOSE_VAR -> yy.visitor.visitVariable(yy.ast, $2);
   ;
 
 comment

@@ -84,7 +84,9 @@ performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* actio
 var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
- return "'" + $$[$0] + "'" 
+
+      this.$ = $$[$0]
+    
 break;
 case 3:
 this.$ = this.$ = $$[$0-1];
@@ -95,35 +97,46 @@ break;
 case 5:
 this.$ = this.$ = $$[$0-1] + S2;
 break;
-case 6: case 8: case 10: case 11: case 44:
+case 6: case 44:
 this.$ = this.$ = $$[$0-2] + $$[$0-1] + $$[$0];
 break;
 case 7:
 this.$ = this.$ = $$[$0];
 break;
+case 8:
+this.$ = yy.visitor.visitOpenElement(yy.ast, $$[$0-1]);;
+break;
 case 9:
-this.$ = this.$ = $$[$0-3] + $$[$0-2] + $$[$0-1] + $$[$0];
+this.$ = yy.visitor.visitOpenElement(yy.ast, $$[$0-2]);;
+break;
+case 10:
+this.$ = yy.visitor.visitCloseElement(yy.ast, $$[$0-1]);;
+break;
+case 11:
+
+      yy.visitor.visitOpenElement(yy.ast, $$[$0-1]);
+      yy.visitor.visitCloseElement(yy.ast, $$[$0-1]);
+    
 break;
 case 12:
 
-                                          this.$ = $$[$0-3] + $$[$0-2] + $$[$0-1] + $$[$0]
-                                          console.log("self_closing_tag", this.$);
-                                        
+      yy.visitor.visitOpenElement(yy.ast, $$[$0-2]);
+      yy.visitor.visitCloseElement(yy.ast, $$[$0-2]);
+    
 break;
 case 19: case 20: case 21: case 22: case 23: case 24: case 27: case 28: case 37: case 38: case 39: case 41: case 42: case 46:
 this.$ = this.$ = $$[$0-1] + $$[$0];
 break;
 case 29:
 
-                                                      this.$ = $$[$0-4] + $$[$0-3] + $$[$0-2] + $$[$0-1] + $$[$0]
-                                                      console.log("attribute", this.$);
-                                                    
+      yy.visitor.visitAttribute(yy.ast, $$[$0-4], $$[$0-1]);
+    
 break;
 case 30: case 31:
 this.$ = this.$ = '"';
 break;
 case 43:
-this.$ = this.$ = "'+" + $$[$0-1] + "+'";
+this.$ = yy.visitor.visitVariable(yy.ast, $$[$0-1]);;
 break;
 }
 },

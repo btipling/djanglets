@@ -22,6 +22,7 @@ function createAttribute() {
       get: function () {
         return this.name_;
       },
+      enumerable: true,
     },
     /**
      * @type {string|Variable}
@@ -37,6 +38,7 @@ function createAttribute() {
         return {
           type: type.ATTRIBUTE,
           value: this.value,
+          name: this.name,
         };
       },
     },

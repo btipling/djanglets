@@ -97,6 +97,10 @@ function createAst () {
         console.log("Initializing");
         this.state = {};
         Object.defineProperties(this.state, {
+          currentText: {
+            value: "",
+            writable: true,
+          },
           nodeStack: {
             value: [],
           },
@@ -116,9 +120,18 @@ function createAst () {
         return this.state.ast;
       }
     },
+    valueOf: {
+      value: function () {
+        var values;
+        values = [];
+        values = this.state.ast.map(function (ast) {
+          return ast.valueOf();
+        });
+        return values;
+      },
+    },
   });
   instance.initialize();
-  console.log("ast initalized", instance);
   return instance;
 }
 
@@ -129,49 +142,85 @@ visitor = {
    */
   visitOpenElement: function (ast, type) {
     var el, node;
-    console.log("visitOpenElement", type);
+    this.endText(ast);
     el = element.createElement();
     el.type = type;
     if (!ast.state.ast) {
       ast.state.ast = [];
     }
     node = ast.getCurrentNode();
-    console.log("node", node);
     if (!node) {
       if (type.toLowerCase() !== template.TEMPLATE_TYPE) {
         throw new Error("Root element must be a <template> element");
       }
       ast.state.ast.push(el);
     } else {
-      console.log("adding", el, "to", node);
       node.children.push(el);
     }
     ast.addNodeToStack(el);
   },
   visitCloseElement: function (ast, type) {
+    this.endText(ast);
     ast.state.currentAttributes.forEach(function (attr) {
       ast.getCurrentNode().attributes.push(attr);
     });
     ast.state.currentAttributes = [];
     ast.popNodeStack();
   },
+  /**
+   * @param {ast} ast
+   * @param {string} name
+   * @param {string} value
+   */
   visitAttribute: function(ast, name, value) {
     var attr;
     attr = attribute.createAttribute();
     attr.name = name;
     attr.value = value;
-    console.log(ast);
     ast.state.currentAttributes.push(attr);
-    console.log("visiting attribute name", name, "value", value);
+    //console.log("visiting attribute name", name, "value", value);
   },
+  /**
+   * @param {ast} ast
+   * @param {string} name
+   * @param {string} variableName
+   */
   visitAttributeVariable: function(ast, name, variableName) {
-    console.log("visiting attribute variable type", name, variableName);
+    //console.log("visiting attribute variable type", name, variableName);
   },
   visitText: function (ast, text) {
-    console.log("visiting text", text);
+    ast.state.currentText += text;
   },
+  /**
+   * @throws {Error} Can't be root node.
+   * @param {ast} ast
+   * @param {string} name
+   */
   visitVariable: function (ast, name) {
-    console.log("visiting variable", name);
+    var node;
+    this.endText(ast);
+    node = ast.getCurrentNode();
+    if (!node) {
+      throw new Error("A variable can't be the root node.");
+    }
+    node.children.push(variable.createVariable(name));
+    console.log(node.children, node);
+  },
+  /**
+   * @throws {Error} endText should never be called if there's no current node.
+   * @param {ast} ast
+   */
+  endText: function (ast) {
+    var node;
+    if (ast.state.currentText === "") {
+      return;
+    }
+    node = ast.getCurrentNode();
+    if (!node) {
+      throw new Error("No node to add text to.");
+    }
+    node.children.push(ast.state.currentText);
+    ast.state.currentText = "";
   },
 };
 

@@ -1,8 +1,9 @@
 %x tag var attribval
-%s comment
+%s comment escape
 
 %%
-<INITIAL,tag>\s+                return "SPACE"
+<tag>\s+                        return "TAG_SPACE"
+<INITIAL>\s+                    return "SPACE"
 <INITIAL>"<"/\w+                {
                                   this.begin('tag');
                                   return "OPEN_TAG"
@@ -46,7 +47,7 @@
                                 }
 
 
-<INITIAL,tag>"{{"              {
+<INITIAL,tag>"{{"               {
                                   this.begin('var');
                                   return "OPEN_VAR"
                                 }
@@ -54,9 +55,14 @@
                                   this.begin('INITIAL');
                                   return "CLOSE_VAR"
                                 }
-<var,tag>\w+                   return "WORD"
-
+<var,tag>\w+                    return "WORD"
+<INITIAL>"\{"                   {
+                                  this.begin("escape");
+                                }
+<escape>.                       {
+                                  this.begin("INITIAL");
+                                }
 <<EOF>>                         return "EOF"
-.                               return "CONTENT"
+<INITIAL>([^"<{"\s])+           return "CONTENT"
 
 %%

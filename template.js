@@ -12,7 +12,6 @@ type = {
   IF: "IF",
   BLOCK: "BLOCK",
   EXTENDS: "EXTENDS",
-  ATTRIBUTE: "ATTRIBUTE",
 };
 
 /**

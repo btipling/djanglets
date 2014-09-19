@@ -39,19 +39,24 @@ function createElement() {
      */
     valueOf: {
       value: function () {
-        var children, attributes;
+        var children, attributes, value;
         children = this.children.map(function (child) {
           return child.valueOf();
         });
         attributes = this.attributes.map(function (attr) {
           return attr.valueOf();
         });
-        return {
+        value = {
           type: type.ELEMENT,
           name: this.type,
-          children: children,
-          attributes: attributes,
         };
+        if (children.length) {
+          value.children = children;
+        }
+        if (attributes.length) {
+          value.attributes = attributes;
+        }
+        return value;
       },
     },
   });

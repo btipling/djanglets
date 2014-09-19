@@ -36,7 +36,6 @@ function createAttribute() {
     valueOf: {
       value: function () {
         return {
-          type: type.ATTRIBUTE,
           value: this.value,
           name: this.name,
         };

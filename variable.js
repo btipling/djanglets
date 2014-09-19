@@ -30,7 +30,6 @@ function createVariable(name) {
     },
     valueOf: {
       value: function () {
-        console.log("var valueOf", this.name);
         return {
           type: type.VARIABLE,
           name: this.name,

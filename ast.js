@@ -94,7 +94,6 @@ function createAst () {
   instance = Object.create(ast, {
     initialize: {
       value: function () {
-        console.log("Initializing");
         this.state = {};
         Object.defineProperties(this.state, {
           currentText: {
@@ -204,7 +203,6 @@ visitor = {
       throw new Error("A variable can't be the root node.");
     }
     node.children.push(variable.createVariable(name));
-    console.log(node.children, node);
   },
   /**
    * @throws {Error} endText should never be called if there's no current node.

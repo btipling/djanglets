@@ -1,3 +1,4 @@
+"use strict";
 var djanglates = require("./djanglates").parser,
     keys, index, key,
     contents,
@@ -18,5 +19,5 @@ console.log('\n\ncontents\n\n');
 console.log(contents);
 parsed = djanglates.parse(contents);
 console.log("\n\nresult:\n");
-console.log(yy.ast.get());
+console.log(yy.ast.get().valueOf());
 

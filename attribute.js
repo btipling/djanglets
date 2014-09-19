@@ -1,4 +1,6 @@
-var Attribute;
+"use strict";
+var Attribute, 
+    type = require("./template").type;
 
 /**
  * Prototype for Attribute
@@ -25,7 +27,18 @@ function createAttribute() {
      * @type {string|Variable}
      */
     value: {
-      writeable: true,
+      writable: true,
+    },
+    /**
+     * @return {Object}
+     */
+    valueOf: {
+      value: function () {
+        return {
+          type: type.ATTRIBUTE,
+          value: this.value,
+        };
+      },
     },
   });
 }

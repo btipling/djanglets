@@ -1,4 +1,6 @@
-var Element;
+"use strict";
+var Element,
+    type = require("./template").type
 
 /**
  * Element prototype.
@@ -31,6 +33,26 @@ function createElement() {
     children: {
       enumberable: true,
       value: [],
+    },
+    /**
+     * @return {Object}
+     */
+    valueOf: {
+      value: function () {
+        var children, attributes;
+        children = this.children.map(function (child) {
+          return child.valueOf();
+        });
+        attributes = this.attributes.map(function (attr) {
+          return attr.valueOf();
+        });
+        return {
+          type: type.ELEMENT,
+          name: this.type,
+          children: children,
+          attributes: attributes,
+        };
+      },
     },
   });
 }

@@ -1,3 +1,4 @@
+"use strict";
 /**
  * root
  *  \     \
@@ -136,7 +137,9 @@ visitor = {
     ast.addNodeToStack(el);
   },
   visitCloseElement: function (ast, type) {
-    ast.getCurrentNode().attributes = ast.state.currentAttributes;
+    ast.state.currentAttributes.forEach(function (attr) {
+      ast.getCurrentNode().attributes.push(attr);
+    });
     ast.state.currentAttributes = [];
     ast.popNodeStack();
   },

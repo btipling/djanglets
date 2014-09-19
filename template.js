@@ -1,5 +1,5 @@
 "use strict";
-var type;
+var type, TEMPLATE_TYPE;
 
 /**
  * @enum {string}
@@ -15,6 +15,13 @@ type = {
   ATTRIBUTE: "ATTRIBUTE",
 };
 
+/**
+ * @const
+ * @type {string}
+ */
+TEMPLATE_TYPE = "template";
+
 module.exports = {
   type: type,
+  TEMPLATE_TYPE: TEMPLATE_TYPE,
 };

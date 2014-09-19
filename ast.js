@@ -63,7 +63,8 @@ var visitor,
     ast,
     variable = require("./variable"),
     element = require("./element"),
-    attribute = require("./attribute");
+    attribute = require("./attribute"),
+    template = require("./template");
 
 
 
@@ -123,16 +124,27 @@ function createAst () {
 
 visitor = {
   /**
+   * @throws {Error} If first element in a root is not a template element.
    * @type {string}
    */
   visitOpenElement: function (ast, type) {
-    var el;
+    var el, node;
+    console.log("visitOpenElement", type);
     el = element.createElement();
     el.type = type;
     if (!ast.state.ast) {
-      ast.state.ast = el;
+      ast.state.ast = [];
+    }
+    node = ast.getCurrentNode();
+    console.log("node", node);
+    if (!node) {
+      if (type.toLowerCase() !== template.TEMPLATE_TYPE) {
+        throw new Error("Root element must be a <template> element");
+      }
+      ast.state.ast.push(el);
     } else {
-      ast.getCurrentNode().children.push(el);
+      console.log("adding", el, "to", node);
+      node.children.push(el);
     }
     ast.addNodeToStack(el);
   },

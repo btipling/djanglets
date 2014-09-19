@@ -8,8 +8,7 @@ root
 
 document
   : /* nothing */
-  | complete_element EOF -> $$ = $1
-  | complete_element SPACE EOF -> $$ = $1
+  | complete_elements EOF -> $$ = $1
   ;
 
 
@@ -17,6 +16,13 @@ complete_element
   : open_tag close_tag -> $$ = $1 + S2
   | open_tag element_content close_tag -> $$ = $1 + $2 + $3
   | self_closing_tag -> $$ = $1
+  ;
+
+complete_elements
+  : complete_element
+  | SPACE
+  | complete_elements complete_element
+  | complete_elements SPACE
   ;
 
 open_tag

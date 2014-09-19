@@ -6,6 +6,7 @@ var djanglates = require("./djanglates").parser,
     filename = "foo.html",
     yy = {},
     ast = require("./ast"),
+    util = require("util"),
     fs = require("fs");
 
 
@@ -19,5 +20,7 @@ console.log('\n\ncontents\n\n');
 console.log(contents);
 parsed = djanglates.parse(contents);
 console.log("\n\nresult:\n");
-console.log(yy.ast.get().valueOf());
+yy.ast.get().forEach(function (ast) {
+  console.log(util.inspect(ast.valueOf(), {showHidden: false, depth: null}));
+});
 

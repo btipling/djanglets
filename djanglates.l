@@ -11,11 +11,11 @@
                                   this.begin('tag');
                                   return "TAG_CLOSER"
                                 }
-<tag>">"                    {
+<tag>">"                        {
                                   this.begin('INITIAL');
                                   return "CLOSE_TAG"
                                 }
-<tag>"/>"                   {
+<tag>"/>"                       {
                                   this.begin('INITIAL');
                                   return "SELF_TAG_CLOSER" 
                                 }

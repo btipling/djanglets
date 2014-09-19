@@ -1,19 +1,26 @@
-<div foo="moo" doo='yoo'>
-  <span style="display:none;">Eh?</span>
-  <input type="text" value="foo"/>
-  <input/>
-  <input  />
-  <!-- foo -->
-  <!--
-     <p>
-      wtf
-      </p>
-<div>
-  -->
-  <p>
+<template name="foo">
+  <div foo="moo" doo='yoo'>
+    <span style="display:none;">Eh?</span>
+    <input type="text" value="foo"/>
+    <input/>
+    <input  />
+    <!-- foo -->
+    <!--
+       <p>
+        wtf
+        </p>
   <div>
-    <div><p>what</p></div>
-  {{foo}}
-  </p>
-    </div>
-</div>
+    -->
+    <p>
+    <div>
+      <div><p>what</p></div>
+    {{foo}}
+    </p>
+      </div>
+  </div>
+</template>
+
+<template name="foo2">
+  <form action="post">
+  </form>
+</template>

@@ -1,5 +1,5 @@
 "use strict";
-var djanglates = require("./djanglates").parser,
+var djanglets = require("./djanglets").parser,
     keys, index, key,
     contents,
     parsed,
@@ -9,15 +9,15 @@ var djanglates = require("./djanglates").parser,
     util = require("util"),
     fs = require("fs"),
     result, fileContent,
-    outFilename = "build.templates.js";
+    outFilename = "build.templets.js";
 
 
 contents = fs.readFileSync(filename, "utf-8");
 keys = Object.keys(ast);
 yy.visitor = ast.visitor;
 yy.ast = ast.createAst();
-djanglates.yy = yy;
-parsed = djanglates.parse(contents);
+djanglets.yy = yy;
+parsed = djanglets.parse(contents);
 result = yy.ast.valueOf();
 fileContent = "djanglets(" + JSON.stringify(result, null, 2) + ");";
 

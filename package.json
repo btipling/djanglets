@@ -11,7 +11,8 @@
   },
   "scripts": {
     "test": "./bin/cli.js test/foo.html -o test/build.templates.js",
-    "build": "./node_modules/jison/lib/cli.js src/djanglets.y src/djanglets.l -o lib/djanglets.js"
+    "build": "./node_modules/jison/lib/cli.js src/djanglets.y src/djanglets.l -o lib/djanglets.js",
+    "build-runtime": "webpack"
   },
   "repository": {
     "type": "git",

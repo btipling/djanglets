@@ -108,7 +108,7 @@ comment_content
 
 contents
   : CONTENT -> yy.visitor.visitText(yy.ast, $1);
-  | SPACE -> yy.visitor.visitText(yy.ast, $1);
+  | SPACE -> yy.visitor.visitText(yy.ast, " ");
   ;
 
 %%

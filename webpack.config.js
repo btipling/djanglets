@@ -7,12 +7,11 @@ module.exports = {
   output: {
     path: "./lib/",
     filename: "djanglets_runtime.js",
-    libraryTarget: "commonjs2",
+    libraryTarget: "var",
     library: "djanglets"
   },
   externals: [
   ],
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin("djanglets", "djanglets_runtime.js")
   ]
 };

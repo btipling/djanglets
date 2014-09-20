@@ -10,7 +10,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./bin/cli.js test/foo.html -o test/build.templates.js",
+    "build": "./node_modules/jison/lib/cli.js src/djanglets.y src/djanglets.l -o lib/djanglets.js"
   },
   "repository": {
     "type": "git",
@@ -25,5 +26,12 @@
   "bugs": {
     "url": "https://github.com/btipling/djanglets/issues"
   },
-  "homepage": "https://github.com/btipling/djanglets"
+  "homepage": "https://github.com/btipling/djanglets",
+  "devDependencies": {
+    "jison": "^0.4.15",
+    "webpack": "^1.4.1-beta1"
+  },
+  "dependencies": {
+    "yargs": "^1.3.1"
+  }
 }

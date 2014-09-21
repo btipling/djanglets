@@ -35,12 +35,10 @@ close_tag
 
 self_closing_tag
   : OPEN_TAG WORD SELF_TAG_CLOSER {
-      yy.visitor.visitOpenElement(yy.ast, $2);
-      yy.visitor.visitCloseElement(yy.ast, $2);
+      yy.visitor.visitSelfClosingElement(yy.ast, $2);
     }
   | OPEN_TAG WORD attributes SELF_TAG_CLOSER  {
-      yy.visitor.visitOpenElement(yy.ast, $2);
-      yy.visitor.visitCloseElement(yy.ast, $2);
+      yy.visitor.visitSelfClosingElement(yy.ast, $2);
     }
   ;
 

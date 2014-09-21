@@ -5,21 +5,23 @@ Package.describe({
 });
 
 Package.onUse(function(api) {
-  api.versionsFrom('METEOR@0.9.2.2');
-  api.addFiles('lib/meteor/djanglets.js');
+  console.log("onUse");
+  api.versionsFrom("METEOR@0.9.2.2");
+  api.addFiles("lib/meteor/djanglets.js");
+  api.export("djanglets", "client");
 });
 
 Package._transitional_registerBuildPlugin({
     name: "compileDjanglets",
     use: [],
     sources: [
-      'lib/compile-djanglets.js'
+      "lib/meteor/compile-djanglets.js"
     ],
     npmDependencies: {}
 });
 
 Package.onTest(function(api) {
-  api.use('tinytest');
-  api.use('bjorn:djanglets');
-  api.addFiles('lib/meteor/djanglets-tests.js');
+  api.use("tinytest");
+  api.use("bjorn:djanglets");
+  api.addFiles("lib/meteor/djanglets-tests.js");
 });

@@ -5,9 +5,8 @@ Package.describe({
 });
 
 Package.onUse(function(api) {
-  console.log("onUse");
   api.versionsFrom("METEOR@0.9.2.2");
-  api.addFiles("lib/meteor/djanglets.js");
+  api.addFiles("lib/meteor/built_runtime.js");
   api.export("djanglets", "client");
 });
 
@@ -15,7 +14,7 @@ Package._transitional_registerBuildPlugin({
     name: "compileDjanglets",
     use: [],
     sources: [
-      "lib/meteor/compile-djanglets.js"
+      "lib/meteor/built_compile.js"
     ],
     npmDependencies: {}
 });

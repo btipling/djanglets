@@ -2,7 +2,7 @@
 "use strict";
 var djanglets = require("../lib/djanglets").parser,
     argv = require('yargs'),
-    keys, index, key, contents, parsed, filename, yy = {},
+    contents, parsed, filename, yy = {},
     ast = require("../lib/djanglets/ast"),
     util = require("util"),
     fs = require("fs"),
@@ -21,7 +21,6 @@ outFilename = argv.output || outFilename;
 filename = argv._[0]
 
 contents = fs.readFileSync(filename, "utf-8");
-keys = Object.keys(ast);
 yy.visitor = ast.visitor;
 yy.ast = ast.createAst();
 djanglets.yy = yy;

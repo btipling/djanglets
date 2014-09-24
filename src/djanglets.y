@@ -98,8 +98,8 @@ variable
   ;
 
 block
-  : OPEN_BLOCK WORD SPACE WORD SPACE CLOSE_BLOCK
-  | OPEN_BLOCK WORD SPACE CLOSE_BLOCK
+  : OPEN_BLOCK WORD SPACE WORD SPACE CLOSE_BLOCK -> yy.visitor.visitComputeBlock(yy.ast, $2, $4);
+  | OPEN_BLOCK WORD SPACE CLOSE_BLOCK -> yy.visitor.visitSignalBlock(yy.ast, $2);
   ;
 
 comment

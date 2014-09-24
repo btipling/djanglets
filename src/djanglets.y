@@ -98,8 +98,8 @@ variable
   ;
 
 djtag
-  : OPEN_DJTAG WORD SPACE WORD SPACE CLOSE_DJTAG -> yy.visitor.visitComputeBlock(yy.ast, $2, $4);
-  | OPEN_DJTAG WORD SPACE CLOSE_DJTAG -> yy.visitor.visitSignalBlock(yy.ast, $2);
+  : OPEN_DJTAG WORD SPACE WORD SPACE CLOSE_DJTAG -> yy.visitor.visitComputeDjtag(yy.ast, $2, $4);
+  | OPEN_DJTAG WORD SPACE CLOSE_DJTAG -> yy.visitor.visitSignalDjtag(yy.ast, $2);
   ;
 
 comment

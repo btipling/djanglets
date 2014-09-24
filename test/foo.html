@@ -4,6 +4,13 @@
     <input type="text" value="foo"/>
     <input/>
     <input  />
+    {% if fooifcheck %}
+      <p>fooifcheck</p>
+    {% elif fooelifcheck %}
+      <p>fooelifcheck</p>
+    {% else %}
+      <p>else</p>
+    {% endif %}
     <!-- foo -->
     <!--
        <p>
@@ -15,6 +22,10 @@
     <div>
       <div><p>what</p></div>
     {{foovar}}
+    <div>
+      Another foovar:
+      {{ foovar }}
+    </div>
     </p>
       </div>
   </div>

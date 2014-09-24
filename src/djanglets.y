@@ -46,12 +46,12 @@ element_content
   : complete_element
   | contents
   | variable
-  | block
+  | djtag
   | comment
   | element_content complete_element -> $$ = $1 + $2
   | element_content contents -> $$ = $1 + $2
   | element_content variable -> $$ = $1 + $2
-  | element_content block -> $$ = $1 + $2
+  | element_content djtag -> $$ = $1 + $2
   | element_content comment -> $$ = $1 + $2
   ;
 
@@ -97,9 +97,9 @@ variable
   : OPEN_VAR WORD CLOSE_VAR -> yy.visitor.visitVariable(yy.ast, $2);
   ;
 
-block
-  : OPEN_BLOCK WORD SPACE WORD SPACE CLOSE_BLOCK -> yy.visitor.visitComputeBlock(yy.ast, $2, $4);
-  | OPEN_BLOCK WORD SPACE CLOSE_BLOCK -> yy.visitor.visitSignalBlock(yy.ast, $2);
+djtag
+  : OPEN_DJTAG WORD SPACE WORD SPACE CLOSE_DJTAG -> yy.visitor.visitComputeBlock(yy.ast, $2, $4);
+  | OPEN_DJTAG WORD SPACE CLOSE_DJTAG -> yy.visitor.visitSignalBlock(yy.ast, $2);
   ;
 
 comment

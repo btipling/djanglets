@@ -1,9 +1,9 @@
-%x tag var attribval block
+%x tag var attribval djtag
 %s comment escape
 
 %%
 <tag>\s+                        return "TAG_SPACE"
-<INITIAL,block>\s+             return "SPACE"
+<INITIAL,djtag>\s+             return "SPACE"
 <INITIAL>"<"/\w+                {
                                   this.begin('tag');
                                   return "OPEN_TAG"
@@ -56,14 +56,14 @@
                                   return "CLOSE_VAR"
                                 }
 <INITIAL,tag>"{%"\s*            {
-                                  this.begin('block');
-                                  return "OPEN_BLOCK"
+                                  this.begin('djtag');
+                                  return "OPEN_DJTAG"
                                 }
-<block>"%}"                     {
+<djtag>"%}"                     {
                                   this.begin('INITIAL');
-                                  return "CLOSE_BLOCK"
+                                  return "CLOSE_DJTAG"
                                 }
-<var,tag,block>\w+             return "WORD"
+<var,tag,djtag>\w+             return "WORD"
 <INITIAL>"\{"                   {
                                   this.begin("escape");
                                 }

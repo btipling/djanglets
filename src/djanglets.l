@@ -39,10 +39,10 @@
                                   this.begin('INITIAL');
                                   return "COMMENT_END"
                                 }
-<comment>\s+                    {
+<comment>\s                    {
                                   return "COMMENT_CONTENT"
                                 }
-<comment>.+                     {
+<comment>.                     {
                                   return "COMMENT_CONTENT"
                                 }
 

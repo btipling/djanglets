@@ -4,13 +4,19 @@
     <input type="text" value="foo"/>
     <input/>
     <input  />
-    {% if fooifcheck %}
-      <p>fooifcheck</p>
-    {% elif fooelifcheck %}
-      <p>fooelifcheck</p>
-    {% else %}
-      <p>else</p>
-    {% endif %}
+    <div>
+      <h2>if begins</h2>
+      <div>
+        {% if fooifcheck %}
+          <p>fooifcheck</p>
+        {% elif fooelifcheck %}
+          <p>fooelifcheck</p>
+        {% else %}
+          <p>else</p>
+        {% endif %}
+      </div>
+      <h2>if ends</h2>
+    </div>
     <!-- foo -->
     <!--
        <p>

@@ -63,7 +63,8 @@
                                   this.begin('INITIAL');
                                   return "CLOSE_DJTAG"
                                 }
-<var,tag,djtag>\w+             return "WORD"
+<djtag>\s*","                   return "COMMA"
+<var,tag,djtag>\w+              return "WORD"
 <INITIAL>"\{"                   {
                                   this.begin("escape");
                                 }

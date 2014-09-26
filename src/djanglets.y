@@ -100,6 +100,9 @@ variable
 djtag
   : OPEN_DJTAG WORD SPACE WORD SPACE CLOSE_DJTAG -> yy.visitor.visitComputeDjtag(yy.ast, $2, $4);
   | OPEN_DJTAG WORD SPACE CLOSE_DJTAG -> yy.visitor.visitSignalDjtag(yy.ast, $2);
+  | OPEN_DJTAG WORD SPACE WORD COMMA SPACE WORD SPACE WORD SPACE WORD SPACE CLOSE_DJTAG {
+      yy.visitor.visitForDjtag(yy.ast, $2, $4, $7, $9, $11);
+    }
   ;
 
 comment

@@ -14,7 +14,7 @@
     "build": "./node_modules/jison/lib/cli.js src/djanglets.y src/djanglets.l -o lib/djanglets.js",
     "build-runtime": "webpack",
     "build-meteor":  "webpack --config webpack.config.meteor_compile.js; webpack --config webpack.config.meteor_runtime.js",
-    "watch-meteor":  "webpack --watch webpack --config webpack.config.meteor_runtime.js",
+    "watch-meteor":  "webpack --watch --config webpack.config.meteor_runtime.js",
     "dev-server": "node test/dev-server.js"
   },
   "repository": {

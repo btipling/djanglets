@@ -8,7 +8,7 @@ root
 
 document
   : /* nothing */
-  | complete_elements EOF -> $$ = $1
+  | complete_elements EOF
   ;
 
 complete_elements
@@ -19,9 +19,9 @@ complete_elements
   ;
 
 complete_element
-  : open_tag close_tag -> $$ = $1 + S2
-  | open_tag element_content close_tag -> $$ = $1 + $2 + $3
-  | self_closing_tag -> $$ = $1
+  : open_tag close_tag
+  | open_tag element_content close_tag
+  | self_closing_tag
   ;
 
 open_tag
@@ -48,18 +48,20 @@ element_content
   | variable
   | djtag
   | comment
-  | element_content complete_element -> $$ = $1 + $2
-  | element_content contents -> $$ = $1 + $2
-  | element_content variable -> $$ = $1 + $2
-  | element_content djtag -> $$ = $1 + $2
-  | element_content comment -> $$ = $1 + $2
+  | html_entity
+  | element_content complete_element
+  | element_content contents
+  | element_content variable
+  | element_content djtag
+  | element_content comment
+  | element_content html_entity
   ;
 
 attributes
   : attribute
   | TAG_SPACE
-  | attributes attribute -> $$ = $1 + $2
-  | attributes TAG_SPACE -> $$ = $1 + $2
+  | attributes attribute
+  | attributes TAG_SPACE
   ;
 
 attribute
@@ -69,8 +71,8 @@ attribute
   ;
 
 quote
-  : BEG_QUOTE -> $$ = '"'
-  | END_QUOTE -> $$ = '"'
+  : BEG_QUOTE
+  | END_QUOTE
   ;
 
 attribute_content
@@ -82,15 +84,19 @@ non_variable_attr_content
   : WORD
   | contents
   | TAG_SPACE
-  | non_variable_attr_content WORD -> $$ = $1 + $2
-  | non_variable_attr_content contents -> $$ = $1 + $2
-  | non_variable_attr_content TAG_SPACE -> $$ = $1 + $2
+  | non_variable_attr_content WORD
+  | non_variable_attr_content contents
+  | non_variable_attr_content TAG_SPACE
   ;
 
 words
   : WORD
-  | words TAG_SPACE -> $$ = $1 + $2
-  | words WORD -> $$ = $1 + $2
+  | words TAG_SPACE
+  | words WORD
+  ;
+
+html_entity
+  : HTML_ENTITY -> yy.visitor.visitHTMLEntity(yy.ast, $1);
   ;
 
 variable
@@ -106,12 +112,12 @@ djtag
   ;
 
 comment
-  : COMMENT_BEGIN comment_content COMMENT_END -> $$ = $1 + $2 + $3
+  : COMMENT_BEGIN comment_content COMMENT_END
   ;
 
 comment_content
   : COMMENT_CONTENT
-  | comment_content COMMENT_CONTENT -> $$ = $1 + $2
+  | comment_content COMMENT_CONTENT
   ;
 
 contents

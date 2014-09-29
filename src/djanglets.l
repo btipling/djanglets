@@ -3,7 +3,7 @@
 
 %%
 <tag>\s+                        return "TAG_SPACE"
-<INITIAL,djtag>\s+             return "SPACE"
+<INITIAL,djtag>\s+              return "SPACE"
 <INITIAL>"<"/\w+                {
                                   this.begin('tag');
                                   return "OPEN_TAG"
@@ -39,10 +39,10 @@
                                   this.begin('INITIAL');
                                   return "COMMENT_END"
                                 }
-<comment>\s                    {
+<comment>\s                     {
                                   return "COMMENT_CONTENT"
                                 }
-<comment>.                     {
+<comment>.                      {
                                   return "COMMENT_CONTENT"
                                 }
 
@@ -64,6 +64,8 @@
                                   return "CLOSE_DJTAG"
                                 }
 <djtag>\s*","                   return "COMMA"
+<INITIAL>"&#x"\d{4}";"          return "HTML_ENTITY"
+<INITIAL>"&"\w+";"              return "HTML_ENTITY"
 <tag,djtag>\w+                  return "WORD"
 <var>[\w"."]+                   return "WORD"
 <INITIAL>"\{"                   {

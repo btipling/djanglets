@@ -29,3 +29,4 @@ node_modules
 
 build.templates.js
 .build*
+.agignore

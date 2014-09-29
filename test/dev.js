@@ -5,6 +5,15 @@ html = template.toString({
   foovar: "<p>Whatup</p>",
   fooifcheck: false,
   fooelifcheck: true,
+  fooNamespaceLookup: {
+    buildings: {
+      skyscrapers: {
+        newyork: {
+          tallest: "freedom tower",
+        },
+      },
+    },
+  },
   foos: {
     dog: "woof",
     cows: "moo",

@@ -64,7 +64,8 @@
                                   return "CLOSE_DJTAG"
                                 }
 <djtag>\s*","                   return "COMMA"
-<var,tag,djtag>\w+              return "WORD"
+<tag,djtag>\w+                  return "WORD"
+<var>[\w"."]+                   return "WORD"
 <INITIAL>"\{"                   {
                                   this.begin("escape");
                                 }
@@ -72,6 +73,6 @@
                                   this.begin("INITIAL");
                                 }
 <<EOF>>                         return "EOF"
-<INITIAL>([^"<"\s])+           return "CONTENT"
+<INITIAL>([^"<"\s])+            return "CONTENT"
 
 %%

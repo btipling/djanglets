@@ -8,11 +8,19 @@ html = template.toString({
   foos: {
     dog: "woof",
     cows: "moo",
+    frog: "ribbit",
   },
   foosR: [
     "red",
     "white",
     "blue",
+  ],
+  foosNested: [
+    "cheese",
+    "bread",
+    "butter",
+    "wine",
+    "beer",
   ],
 });
 console.log("after", html);

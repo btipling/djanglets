@@ -27,7 +27,11 @@
     <div>
       <p>for begins</p>
       {% for k, v in foos %}
-        <p>k-> {{k}} and v -> {{v}} </p>
+        <hr/>
+        {% for key, value in foosNested %}
+          <p>k-> {{k}} and v -> {{v}} </p>
+          <p>:::: key -> {{key}} and value -> {{value}}</p>
+        {% endfor %}
       {% endfor %}
       <p>for ends</p>
     </div>

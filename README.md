@@ -1,3 +1,5 @@
+![Travis build test](https://travis-ci.org/btipling/djanglets.svg?branch=master)
+
 djanglets
 =========
 

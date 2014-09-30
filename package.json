@@ -10,12 +10,12 @@
     "test": "test"
   },
   "scripts": {
-    "test": "./bin/cli.js test/foo.html -o test/build.templates.js",
     "build": "./node_modules/jison/lib/cli.js src/djanglets.y src/djanglets.l -o lib/djanglets.js",
     "build-runtime": "webpack",
-    "build-meteor":  "webpack --config webpack.config.meteor_compile.js; webpack --config webpack.config.meteor_runtime.js",
-    "watch-meteor":  "webpack --watch --config webpack.config.meteor_runtime.js",
-    "dev-server": "node test/dev-server.js"
+    "build-meteor": "webpack --config webpack.config.meteor_compile.js; webpack --config webpack.config.meteor_runtime.js",
+    "watch-meteor": "webpack --watch --config webpack.config.meteor_runtime.js",
+    "build-examples": "./bin/cli.js examples/foo.html -o examples/build.templates.js",
+    "examples-server": "node bin/dev-server.js"
   },
   "repository": {
     "type": "git",
@@ -34,6 +34,7 @@
   "devDependencies": {
     "jison": "^0.4.15",
     "node-static": "^0.7.5",
+    "nodeunit": "^0.9.0",
     "webpack": "^1.4.1-beta1"
   },
   "dependencies": {

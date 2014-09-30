@@ -10,6 +10,7 @@
     "test": "test"
   },
   "scripts": {
+    "test": "node bin/test.js",
     "build": "./node_modules/jison/lib/cli.js src/djanglets.y src/djanglets.l -o lib/djanglets.js",
     "build-runtime": "webpack",
     "build-meteor": "webpack --config webpack.config.meteor_compile.js; webpack --config webpack.config.meteor_runtime.js",

@@ -11,7 +11,7 @@ This project is under heavy development and is still a prototype.
 ##Reactive rendering
 
 The reactive aspects are currently only supported for meteor.js, but they will become available
-regular JavaScript. The reactivity is such that changes in template variables update only
+for regular JavaScript. The reactivity is such that changes in template variables update only
 the elements that have changed, once the template has rendered. To achieve this the DOM
 state exists in memory.
 

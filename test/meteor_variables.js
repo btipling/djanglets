@@ -13,7 +13,7 @@ module.exports = {
     var variable, expected = "foo";
     variable = meteorVariable.createVariable("foo");
     test.ok(meteorVariable.Variable.isPrototypeOf(variable), "Should have created a variable.");
-    test.equals(variable.name, expected, "Variable shoul have gotten its name.");
+    test.equals(variable.name, expected, "Variable should have gotten its name.");
     test.done();
   },
   testSetVariableValue: function (test) {

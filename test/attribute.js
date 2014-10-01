@@ -10,7 +10,7 @@ module.exports = {
   tearDown: function (callback) {
     callback();
   },
-  testCreateMeteorVariable: function (test) {
+  testCreateAttribute: function (test) {
     var attribute, expected = "foo";
     attribute = djAttribute.createAttribute("foo");
     test.ok(djAttribute.Attribute.isPrototypeOf(attribute), "Should create a djanglets attribute.");

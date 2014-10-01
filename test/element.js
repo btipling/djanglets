@@ -8,7 +8,6 @@ var djElement = require("../lib/djanglets/element"),
 
 module.exports = {
   setUp: function (callback) {
-    var i;
     element = djElement.createElement();
     element.type = "DIV";
     element.children.push(djElement.createElement());

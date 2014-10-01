@@ -10,7 +10,7 @@ module.exports = {
   tearDown: function (callback) {
     callback();
   },
-  testCreateMeteorVariable: function (test) {
+  testCreateVariable: function (test) {
     var variable, expected = "foo";
     variable = djVariable.createVariable("foo");
     test.ok(djVariable.Variable.isPrototypeOf(variable), "Should create a djanglets variable.");

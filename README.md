@@ -1,4 +1,4 @@
-![Travis build test](https://travis-ci.org/btipling/djanglets.svg?branch=master)
+[![Travis build test](https://travis-ci.org/btipling/djanglets.svg?branch=master)](https://travis-ci.org/btipling/djanglets)
 
 djanglets
 =========

@@ -122,4 +122,11 @@ module.exports = {
     test.equals(result, expected, "Expected a live variable lookup to work.");
     test.done();
   },
+  testGetUniqueId: function (test) {
+    var result1, result2;
+    result1 = utils.getUniqueId();
+    result2 = utils.getUniqueId();
+    test.notEqual(result1.toString(), result2.toString(), "Expected ids to be unique.");
+    test.done();
+  },
 };

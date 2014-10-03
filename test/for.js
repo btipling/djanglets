@@ -9,7 +9,6 @@ var djFor = require("../lib/djanglets/for"),
 module.exports = {
   setUp: function (callback) {
     forObj = djFor.createFor("fooKey", "fooValue", "fooVariable");
-    forObj = djFor.createFor("fooKey", "fooValue", "fooVariable");
     forObj.children.push(djElement.createElement());
     forObj.children[0].type = "SPAN";
     forObj.children[0].children.push(djVariable.createVariable("fooKey"));
@@ -52,6 +51,38 @@ module.exports = {
     expected = "<SPAN>cat:meow</SPAN><SPAN>dog:woof</SPAN><SPAN>cow:moo</SPAN>";
     test.equal(forObj.preRender()[0].toString(data), expected,
       "Should have executed for logic correctly.");
+    test.done();
+  },
+  testForNoKey: function (test) {
+    var expected, data = {fooVariable: [
+      "cheese",
+      "wine",
+      "bread",
+    ]};
+    forObj = djFor.createFor(null, "fooValue", "fooVariable");
+    forObj.children.push(djElement.createElement());
+    forObj.children[0].type = "SPAN";
+    forObj.children[0].children.push(djVariable.createVariable("fooValue"));
+    expected = "<SPAN>cheese</SPAN><SPAN>wine</SPAN><SPAN>bread</SPAN>";
+    test.equal(forObj.preRender()[0].toString(data), expected,
+      "Should have rendered without a key");
+    test.done();
+  },
+  testSubstituteKey: function (test) {
+    var expected, data = {fooVariable: [
+      "cheese",
+      "wine",
+      "bread",
+    ]};
+    forObj = djFor.createFor(null, "fooValue", "fooVariable");
+    forObj.children.push(djElement.createElement());
+    forObj.children[0].type = "SPAN";
+    forObj.children[0].children.push(djVariable.createVariable("__KEY__"));
+    forObj.children[0].children.push(":");
+    forObj.children[0].children.push(djVariable.createVariable("fooValue"));
+    expected = "<SPAN>0:cheese</SPAN><SPAN>1:wine</SPAN><SPAN>2:bread</SPAN>";
+    test.equal(forObj.preRender()[0].toString(data), expected,
+      "Should have rendered without a key");
     test.done();
   },
 };

@@ -38,6 +38,13 @@
       </div>
     </div>
     <div>
+      <p>for no key begins</p>
+      {% for v in foos %}
+          <p>v -> {{v}} </p>
+      {% endfor %}
+      <p>for no key ends</p>
+    </div>
+    <div>
       <p>for begins</p>
       {% for k, v in foos %}
         <hr/>

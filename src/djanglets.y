@@ -116,6 +116,68 @@ djtag
     }
   ;
 
+djtag
+  : open_djtag djtag_contents CLOSE_DJTAG
+  ;
+
+open_djtag
+  : OPEN_DJTAG {
+      console.log("Open djtag", trim($s.substr(1).trim()));
+    }
+  ;
+
+djtag_contents
+  : djtag_content
+  | djtag_contents djtag_content
+  ;
+
+djtag_content
+  : SPACE
+  | string
+  | variable
+  | WORD
+  | boolean_expressions
+  ;
+
+string
+  : BEGIN_QUOTE STRING_CONTENT END_QUOTE -> console.log("string", $2);
+  ;
+
+variable
+  : WORD filters
+  ;
+
+filters
+  : filter
+  | filters filter
+  ;
+
+filter
+  : PIPE WORD
+  | PIPE WORD COLON STRING
+  ;
+
+boolean_expressions
+  :  boolean_expression
+  |  boolean_expressions boolean_operator boolean_expression
+  ;
+
+boolean_expression
+  : variable
+  | boolean_token SPACE EQUALS SPACE boolean_token
+  | boolean_token SPACE NOT_EQUALS SPACE boolean_token
+  ;
+
+boolean_token
+  : variable
+  | string
+  ;
+
+boolean_operator
+  : OR
+  | AND
+  ;
+
 comment
   : COMMENT_BEGIN comment_content COMMENT_END
   ;

@@ -65,10 +65,22 @@ attributes
   ;
 
 attribute
-  : WORD EQUAL quote attribute_content quote {
+  : WORD EQUAL quote attribute_contents quote {
       yy.visitor.visitAttribute(yy.ast, $1, $4);
     }
+  | djtag
   ;
+
+attribute_contents
+  : attribute_content
+  | attribute attribute_content
+  ;
+
+attribute_content
+  | dj_tag
+  | attribute_string
+  ;
+
 
 quote
   : BEG_QUOTE

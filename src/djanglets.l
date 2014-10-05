@@ -23,7 +23,7 @@
                                   this.begin('attribval')
                                   return "BEG_QUOTE"
                                 }
-<tag>\s+                        return "TAG_SPACE"
+<tag>\s+                        /* ignore */
 <attribval>["\"'"]              {
                                   this.begin('tag')
                                   return "END_QUOTE"
@@ -66,7 +66,7 @@
                                   this.begin('doublequote');
                                   return "BEG_DJTAG_QUOTE";
                                 }
-<djtag>\s+                      return "DJTAG_SPACE";
+<djtag>\s+                      /* ignore */
 <doublequote>"\""               {
                                   this.begin("djtag");
                                   return "END_DJTAG_QUOTE";

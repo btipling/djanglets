@@ -63,8 +63,7 @@ tag_contents
   ;
 
 tag_content
-  : TAG_SPACE
-  | attribute
+  : attribute
   | djtag
   ;
 
@@ -101,15 +100,12 @@ attribute_content
 non_variable_attr_content
   : WORD
   | contents
-  | TAG_SPACE
   | non_variable_attr_content WORD
   | non_variable_attr_content contents
-  | non_variable_attr_content TAG_SPACE
   ;
 
 words
   : WORD
-  | words TAG_SPACE
   | words WORD
   ;
 
@@ -134,9 +130,9 @@ open_djtag
 djtag_content
   : WORD
   | WORD djtag_variable
-  | FOR DJTAG_SPACE iterator_expression
-  | IF DJTAG_SPACE boolean_expressions
-  | ELIF DJTAG_SPACE boolean_expressions
+  | FOR iterator_expression
+  | IF boolean_expressions
+  | ELIF boolean_expressions
   ;
 
 string
@@ -159,21 +155,20 @@ filter
   ;
 
 iterator_expression
-  : djtag_variable DJTAG_SPACE IN DJTAG_SPACE djtag_variable
-  | djtag_variable COMMA DJTAG_SPACE djtag_variable IN DJTAG_SPACE djtag_variable
-  | djtag_variable DJTAG_SPACE COMMA DJTAG_SPACE djtag_variable IN DJTAG_SPACE djtag_variable
+  : djtag_variable IN djtag_variable
+  | djtag_variable COMMA djtag_variable IN djtag_variable
   ;
 
 boolean_expressions
   : boolean_expression
-  | boolean_expressions DJTAG_SPACE boolean_operator DJTAG_SPACE boolean_expression
-  | boolean_expressions DJTAG_SPACE NOT boolean_operator DJTAG_SPACE boolean_expression
+  | boolean_expressions boolean_operator boolean_expression
+  | boolean_expressions NOT boolean_operator boolean_expression
   ;
 
 boolean_expression
   : NOT boolean_token
   | boolean_token
-  | boolean_token DJTAG_SPACE comparison_operator DJTAG_SPACE boolean_token
+  | boolean_token comparison_operator boolean_token
   ;
 
 comparison_operator

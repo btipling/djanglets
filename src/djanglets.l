@@ -62,11 +62,32 @@
                                   return "CLOSE_DJTAG";
                                 }
 <djtag>\s*","                   return "COMMA";
+<djtag>"for"                    return "FOR";
+<djtag>"if"                     return "IF";
+<djtag>"elif"                   return "ELIF";
+<djtag>"else"                   return "ELSE";
+<djtag>"extends"                return "EXTENDS";
+<djtag>"include"                return "IF";
+<djtag>"or"                     return "OR";
+<djtag>"and"                    return "AND";
+<djtag>"in"                     return "IN";
+<djtag>"not"                    return "NOT";
+<djtag>"=="                     return "EQUALS";
+<djtag>"!="                     return "NOT_EQUALS";
+<djtag>">"                      return "GREATER_THAN";
+<djtag>"<"                      return "LESS_THAN";
+<djtag>">="                     return "GREATER_THAN_EQUALS";
+<djtag>"<="                     return "LESS_THAN_EQUALS";
+<djtag>"True"                   return "TRUE";
+<djtag>"False"                  return "FALSE";
+<djtag>":"                      return "COLON";
+<djtag>"|"                      return "PIPE";
+<djtag>\-?[0-9]+(?:\.[0-9]+)?   return "NUMBER";
+<djtag>\s+                      /* ignore */
 <djtag>"\""                     {
                                   this.begin('doublequote');
                                   return "BEG_DJTAG_QUOTE";
                                 }
-<djtag>\s+                      /* ignore */
 <doublequote>"\""               {
                                   this.begin("djtag");
                                   return "END_DJTAG_QUOTE";
@@ -79,18 +100,7 @@
                                   this.begin("djtag");
                                   return "END_DJTAG_QUOTE";
                                 }
-<singlequote,doublequote>.      {
-                                  return "STRING_CONTENT";
-                                }
-<djtag>"or"                     {
-                                  return "OR";
-                                }
-<djtag>"and"                    {
-                                  return "AND";
-                                }
-<djtag>"in"                     {
-                                  return "IN";
-                                }
+<singlequote,doublequote>.      return "STRING_CONTENT";
 <INITIAL>"&#x"\d{4}";"          return "HTML_ENTITY";
 <INITIAL>"&"\w+";"              return "HTML_ENTITY";
 <tag,djtag>\w+                  return "WORD";

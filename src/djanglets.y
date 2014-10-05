@@ -129,6 +129,10 @@ open_djtag
 
 djtag_content
   : WORD
+  | ELSE
+  | BLOCK
+  | INCLUDE string
+  | EXTENDS string
   | WORD djtag_variable
   | FOR iterator_expression
   | IF boolean_expressions

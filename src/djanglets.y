@@ -122,7 +122,7 @@ variable
   ;
 
 djtag
-  : open_djtag djtag_contents CLOSE_DJTAG
+  : open_djtag djtag_content CLOSE_DJTAG
   ;
 
 open_djtag
@@ -131,15 +131,12 @@ open_djtag
     }
   ;
 
-djtag_contents
-  : djtag_content
-  | djtag_contents djtag_content
-  ;
-
 djtag_content
-  : SPACE
-  | WORD
-  | boolean_expressions
+  : WORD
+  | WORD djtag_variable
+  | FOR DJTAG_SPACE iterator_expression
+  | IF DJTAG_SPACE boolean_expressions
+  | ELIF DJTAG_SPACE boolean_expressions
   ;
 
 string
@@ -147,7 +144,7 @@ string
   ;
 
 djtag_variable
-  : WORD filters
+  : WORD
   ;
 
 filters
@@ -156,22 +153,44 @@ filters
   ;
 
 filter
-  : PIPE WORD
+  :
+  | PIPE WORD
   | PIPE WORD COLON STRING
   ;
 
+iterator_expression
+  : djtag_variable DJTAG_SPACE IN DJTAG_SPACE djtag_variable
+  | djtag_variable COMMA DJTAG_SPACE djtag_variable IN DJTAG_SPACE djtag_variable
+  | djtag_variable DJTAG_SPACE COMMA DJTAG_SPACE djtag_variable IN DJTAG_SPACE djtag_variable
+  ;
+
 boolean_expressions
-  :  boolean_expression
-  |  boolean_expressions boolean_operator boolean_expression
+  : boolean_expression
+  | boolean_expressions DJTAG_SPACE boolean_operator DJTAG_SPACE boolean_expression
+  | boolean_expressions DJTAG_SPACE NOT boolean_operator DJTAG_SPACE boolean_expression
   ;
 
 boolean_expression
-  : boolean_token SPACE BOOLEAN_EQUALS SPACE boolean_token
-  | boolean_token SPACE BOOLEAN_NOT_EQUALS SPACE boolean_token
+  : NOT boolean_token
+  | boolean_token
+  | boolean_token DJTAG_SPACE comparison_operator DJTAG_SPACE boolean_token
+  ;
+
+comparison_operator
+  : EQUALS
+  | NOT_EQUALS
+  | GREATER_THAN
+  | LESS_THAN
+  | GREATER_THAN_EQUALS
+  | LESS_THAN_EQUALS
+  | IN
   ;
 
 boolean_token
   : djtag_variable
+  | TRUE
+  | FALSE
+  | NUMBER
   | string
   ;
 

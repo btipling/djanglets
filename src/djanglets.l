@@ -2,8 +2,7 @@
 %s comment escape
 
 %%
-<tag>\s+                        return "TAG_SPACE"
-<INITIAL,djtag>\s+              return "SPACE"
+<INITIAL>\s+                    return "SPACE"
 <INITIAL>"<"/\w+                {
                                   this.begin('tag');
                                   return "OPEN_TAG"
@@ -24,6 +23,7 @@
                                   this.begin('attribval')
                                   return "BEG_QUOTE"
                                 }
+<tag>\s+                        return "TAG_SPACE"
 <attribval>["\"'"]              {
                                   this.begin('tag')
                                   return "END_QUOTE"
@@ -66,6 +66,7 @@
                                   this.begin('doublequote');
                                   return "BEG_DJTAG_QUOTE";
                                 }
+<djtag>\s+                      return "DJTAG_SPACE";
 <doublequote>"\""               {
                                   this.begin("djtag");
                                   return "END_DJTAG_QUOTE";

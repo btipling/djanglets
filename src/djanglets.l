@@ -1,4 +1,4 @@
-%x tag var attribval djtag, singlequote, doublequote
+%x tag var attribval djtag singlequote doublequote
 %s comment escape
 
 %%
@@ -45,8 +45,6 @@
 <comment>.                      {
                                   return "COMMENT_CONTENT"
                                 }
-
-
 <INITIAL,tag>"{{"\s*            {
                                   this.begin('var');
                                   return "OPEN_VAR"
@@ -73,18 +71,16 @@
                                   return "END_QUOTE";
                                 }
 <djtag>"'"                      {
-                                }
                                   this.begin('singlequote');
                                   return "BEGIN_QUOTE";
                                 }
-<singlequote>"\""               {
+<singlequote>"'"                {
                                   this.begin("djtag");
                                   return "END_QUOTE";
                                 }
 <singlequote,doublequote>.      {
                                   return "STRING_CONTENT";
                                 }
-<djtag>
 <INITIAL>"&#x"\d{4}";"          return "HTML_ENTITY"
 <INITIAL>"&"\w+";"              return "HTML_ENTITY"
 <tag,djtag>\w+                  return "WORD"

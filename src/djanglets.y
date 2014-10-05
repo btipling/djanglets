@@ -77,10 +77,13 @@ attribute_contents
   ;
 
 attribute_content
-  | dj_tag
+  : djtag
   | attribute_string
   ;
 
+attribute_string
+  : ATTRIBUTE_STRING
+  ;
 
 quote
   : BEG_QUOTE
@@ -113,19 +116,6 @@ html_entity
 
 variable
   : OPEN_VAR WORD CLOSE_VAR -> yy.visitor.visitVariable(yy.ast, $2);
-  ;
-
-djtag
-  : OPEN_DJTAG WORD SPACE WORD SPACE CLOSE_DJTAG -> yy.visitor.visitComputeDjtag(yy.ast, $2, $4);
-  | OPEN_DJTAG WORD SPACE CLOSE_DJTAG -> yy.visitor.visitSignalDjtag(yy.ast, $2);
-  /* {% for value in something %} */
-  | OPEN_DJTAG WORD SPACE WORD SPACE WORD SPACE WORD SPACE CLOSE_DJTAG {
-      yy.visitor.visitForDjtag(yy.ast, $2, null, $4, $6, $8);
-    }
-  /* {% for key, value in something %} */
-  | OPEN_DJTAG WORD SPACE WORD COMMA SPACE WORD SPACE WORD SPACE WORD SPACE CLOSE_DJTAG {
-      yy.visitor.visitForDjtag(yy.ast, $2, $4, $7, $9, $11);
-    }
   ;
 
 djtag

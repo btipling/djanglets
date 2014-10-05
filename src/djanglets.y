@@ -26,7 +26,7 @@ complete_element
 
 open_tag
   : OPEN_TAG WORD CLOSE_TAG -> yy.visitor.visitOpenElement(yy.ast, $2);
-  | OPEN_TAG WORD attributes CLOSE_TAG -> yy.visitor.visitOpenElement(yy.ast, $2);
+  | OPEN_TAG WORD tag_contents CLOSE_TAG -> yy.visitor.visitOpenElement(yy.ast, $2);
   ;
 
 close_tag
@@ -37,7 +37,7 @@ self_closing_tag
   : OPEN_TAG WORD SELF_TAG_CLOSER {
       yy.visitor.visitSelfClosingElement(yy.ast, $2);
     }
-  | OPEN_TAG WORD attributes SELF_TAG_CLOSER  {
+  | OPEN_TAG WORD tag_contents SELF_TAG_CLOSER  {
       yy.visitor.visitSelfClosingElement(yy.ast, $2);
     }
   ;
@@ -57,26 +57,29 @@ element_content
   | element_content html_entity
   ;
 
-attributes
-  : attribute
-  | TAG_SPACE
-  | attributes attribute
-  | attributes TAG_SPACE
+tag_contents
+  : tag_content
+  | tag_contents tag_content
   ;
 
-attribute
-  : WORD EQUAL quote attribute_contents quote {
-      yy.visitor.visitAttribute(yy.ast, $1, $4);
-    }
+tag_content
+  : TAG_SPACE
+  | attribute
   | djtag
   ;
 
-attribute_contents
-  : attribute_content
-  | attribute attribute_content
+attribute
+  : WORD EQUAL quote attribute_value quote {
+      yy.visitor.visitAttribute(yy.ast, $1, $4);
+    }
   ;
 
-attribute_content
+attribute_value
+  : attribute_value_contents
+  | attribute_value attribute_value_contents
+  ;
+
+attribute_value_contents
   : djtag
   | attribute_string
   ;
@@ -135,17 +138,15 @@ djtag_contents
 
 djtag_content
   : SPACE
-  | string
-  | variable
   | WORD
   | boolean_expressions
   ;
 
 string
-  : BEGIN_QUOTE STRING_CONTENT END_QUOTE -> console.log("string", $2);
+  : BEG_DJTAG_QUOTE STRING_CONTENT END_DJTAG_QUOTE -> console.log("string", $2);
   ;
 
-variable
+djtag_variable
   : WORD filters
   ;
 
@@ -165,13 +166,12 @@ boolean_expressions
   ;
 
 boolean_expression
-  : variable
-  | boolean_token SPACE EQUALS SPACE boolean_token
-  | boolean_token SPACE NOT_EQUALS SPACE boolean_token
+  : boolean_token SPACE BOOLEAN_EQUALS SPACE boolean_token
+  | boolean_token SPACE BOOLEAN_NOT_EQUALS SPACE boolean_token
   ;
 
 boolean_token
-  : variable
+  : djtag_variable
   | string
   ;
 
@@ -181,7 +181,7 @@ boolean_operator
   ;
 
 comment
-  : COMMENT_BEGIN comment_content COMMENT_END
+  : COMMENT_BEG comment_content COMMENT_END
   ;
 
 comment_content

@@ -33,7 +33,7 @@
 
 <INITIAL>"<!--"                 {
                                   this.begin('comment')
-                                  return "COMMENT_BEGIN"
+                                  return "COMMENT_BEG"
                                 }
 <comment>"-->"                  {
                                   this.begin('INITIAL');
@@ -47,44 +47,53 @@
                                 }
 <INITIAL,tag>"{{"\s*            {
                                   this.begin('var');
-                                  return "OPEN_VAR"
+                                  return "OPEN_VAR";
                                 }
 <var>\s*"}}"                    {
                                   this.begin('INITIAL');
-                                  return "CLOSE_VAR"
+                                  return "CLOSE_VAR";
                                 }
 <INITIAL,tag>"{%"\s*\w+         {
                                   this.begin('djtag');
-                                  return "OPEN_DJTAG"
+                                  return "OPEN_DJTAG";
                                 }
 <djtag>"%}"                     {
                                   this.begin('INITIAL');
-                                  return "CLOSE_DJTAG"
+                                  return "CLOSE_DJTAG";
                                 }
-<djtag>\s*","                   return "COMMA"
+<djtag>\s*","                   return "COMMA";
 <djtag>"\""                     {
                                   this.begin('doublequote');
-                                  return "BEGIN_QUOTE";
+                                  return "BEG_DJTAG_QUOTE";
                                 }
 <doublequote>"\""               {
                                   this.begin("djtag");
-                                  return "END_QUOTE";
+                                  return "END_DJTAG_QUOTE";
                                 }
 <djtag>"'"                      {
                                   this.begin('singlequote');
-                                  return "BEGIN_QUOTE";
+                                  return "BEG_DJTAG_QUOTE";
                                 }
 <singlequote>"'"                {
                                   this.begin("djtag");
-                                  return "END_QUOTE";
+                                  return "END_DJTAG_QUOTE";
                                 }
 <singlequote,doublequote>.      {
                                   return "STRING_CONTENT";
                                 }
-<INITIAL>"&#x"\d{4}";"          return "HTML_ENTITY"
-<INITIAL>"&"\w+";"              return "HTML_ENTITY"
-<tag,djtag>\w+                  return "WORD"
-<var>[\w"."]+                   return "WORD"
+<djtag>"or"                     {
+                                  return "OR";
+                                }
+<djtag>"and"                    {
+                                  return "AND";
+                                }
+<djtag>"in"                     {
+                                  return "IN";
+                                }
+<INITIAL>"&#x"\d{4}";"          return "HTML_ENTITY";
+<INITIAL>"&"\w+";"              return "HTML_ENTITY";
+<tag,djtag>\w+                  return "WORD";
+<var>[\w"."]+                   return "WORD";
 <INITIAL>"\{"                   {
                                   this.begin("escape");
                                 }

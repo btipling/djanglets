@@ -1,42 +1,56 @@
 %x tag var attribval djtag singlequote doublequote
 %s comment escape
 
+%{
+  var prevState = 'INITIAL',
+    currentState = 'INITIAL';
+  function setState(state, self) {
+    prevState = currentState;
+    currentState = state;
+    self.begin(state);
+  }
+%}
+
 %%
 <INITIAL>\s+                    return "SPACE"
 <INITIAL>"<"/\w+                {
-                                  this.begin('tag');
+                                  setState('tag', this);
                                   return "OPEN_TAG"
                                 }
 <INITIAL>"</"/\w+               {
-                                  this.begin('tag');
+                                  setState('tag', this);
                                   return "TAG_CLOSER"
                                 }
 <tag>">"                        {
-                                  this.begin('INITIAL');
+                                  setState('INITIAL', this);
                                   return "CLOSE_TAG"
                                 }
 <tag>"/>"                       {
-                                  this.begin('INITIAL');
+                                  setState('INITIAL', this);
                                   return "SELF_TAG_CLOSER" 
                                 }
 <tag>["\"'"]                    {
-                                  this.begin('attribval')
+                                  setState('attribval', this)
                                   return "BEG_QUOTE"
                                 }
 <tag>\s+                        /* ignore */
 <attribval>["\"'"]              {
-                                  this.begin('tag')
+                                  setState('tag', this)
                                   return "END_QUOTE"
+                                }
+<attribval>"{%"\s*              {
+                                  setState('djtag', this);
+                                  return "OPEN_DJTAG";
                                 }
 <attribval>[^"\"'"]+            return "ATTRIB_CONTENT"
 <tag>"="                        return "EQUAL"
 
 <INITIAL>"<!--"                 {
-                                  this.begin('comment')
+                                  setState('comment', this)
                                   return "COMMENT_BEG"
                                 }
 <comment>"-->"                  {
-                                  this.begin('INITIAL');
+                                  setState('INITIAL', this);
                                   return "COMMENT_END"
                                 }
 <comment>\s                     {
@@ -46,19 +60,19 @@
                                   return "COMMENT_CONTENT"
                                 }
 <INITIAL,tag>"{{"\s*            {
-                                  this.begin('var');
+                                  setState('var', this);
                                   return "OPEN_VAR";
                                 }
 <var>\s*"}}"                    {
-                                  this.begin('INITIAL');
+                                  setState('INITIAL', this);
                                   return "CLOSE_VAR";
                                 }
-<INITIAL,tag>"{%"\s*\w+         {
-                                  this.begin('djtag');
+<INITIAL,tag>"{%"\s*            {
+                                  setState('djtag', this);
                                   return "OPEN_DJTAG";
                                 }
 <djtag>"%}"                     {
-                                  this.begin('INITIAL');
+                                  setState(prevState, this);
                                   return "CLOSE_DJTAG";
                                 }
 <djtag>\s*","                   return "COMMA";
@@ -85,19 +99,19 @@
 <djtag>\-?[0-9]+(?:\.[0-9]+)?   return "NUMBER";
 <djtag>\s+                      /* ignore */
 <djtag>"\""                     {
-                                  this.begin('doublequote');
+                                  setState('doublequote', this);
                                   return "BEG_DJTAG_QUOTE";
                                 }
 <doublequote>"\""               {
-                                  this.begin("djtag");
+                                  setState('djtag', this);
                                   return "END_DJTAG_QUOTE";
                                 }
 <djtag>"'"                      {
-                                  this.begin('singlequote');
+                                  setState('singlequote', this);
                                   return "BEG_DJTAG_QUOTE";
                                 }
 <singlequote>"'"                {
-                                  this.begin("djtag");
+                                  setState('djtag', this);
                                   return "END_DJTAG_QUOTE";
                                 }
 <singlequote,doublequote>.      return "STRING_CONTENT";
@@ -106,10 +120,10 @@
 <tag,djtag>\w+                  return "WORD";
 <var>[\w"."]+                   return "WORD";
 <INITIAL>"\{"                   {
-                                  this.begin("escape");
+                                  setState('escape', this);
                                 }
 <escape>.                       {
-                                  this.begin("INITIAL");
+                                  setState('INITIAL', this);
                                 }
 <<EOF>>                         return "EOF"
 <INITIAL>([^"<"\s])+            return "CONTENT"

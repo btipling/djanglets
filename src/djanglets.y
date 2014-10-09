@@ -84,7 +84,7 @@ attribute_value_contents
   ;
 
 attribute_string
-  : ATTRIBUTE_STRING
+  : ATTRIB_CONTENT
   ;
 
 quote
@@ -123,7 +123,7 @@ djtag
 
 open_djtag
   : OPEN_DJTAG {
-      console.log("Open djtag", trim($s.substr(1).trim()));
+      console.log("Open djtag", $1.substr(1).trim());
     }
   ;
 

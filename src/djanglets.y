@@ -118,25 +118,29 @@ variable
   ;
 
 djtag
-  : open_djtag djtag_content CLOSE_DJTAG
+  : open_djtag djtag_content close_djtag
   ;
 
 open_djtag
-  : OPEN_DJTAG {
-      console.log("Open djtag", $1.substr(1).trim());
-    }
+  : OPEN_DJTAG -> console.log("OPEN_DJTAG");
+  ;
+
+close_djtag
+  : CLOSE_DJTAG -> console.log("CLOSE_DJTAG");
   ;
 
 djtag_content
-  : WORD
-  | ELSE
-  | BLOCK
-  | INCLUDE string
-  | EXTENDS string
-  | WORD djtag_variable
-  | FOR iterator_expression
-  | IF boolean_expressions
-  | ELIF boolean_expressions
+  : WORD -> console.log("WORD", $1);
+  | ELSE -> console.log("ELSE");
+  | BLOCK -> console.log("BLOCK");
+  | ENDIF -> console.log("ENDIF");
+  | ENDFOR -> console.log("ENDFOR");
+  | INCLUDE string -> console.log("INCLUDE", $2);
+  | EXTENDS string -> console.log("EXTENDS", $2);
+  | WORD djtag_variable -> console.log("word var", $2);
+  | FOR iterator_expression -> console.log("FOR");
+  | IF boolean_expressions -> console.log("IF", $2);
+  | ELIF boolean_expressions -> console.log("ELIF", $2);
   ;
 
 string
@@ -159,8 +163,10 @@ filter
   ;
 
 iterator_expression
-  : djtag_variable IN djtag_variable
-  | djtag_variable COMMA djtag_variable IN djtag_variable
+  : djtag_variable IN djtag_variable -> console.log("single var for", $1, $3);
+  | djtag_variable COMMA djtag_variable IN djtag_variable {
+      console.log("double var for", $1, $3, $5);
+  }
   ;
 
 boolean_expressions

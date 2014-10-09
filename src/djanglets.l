@@ -77,9 +77,11 @@
                                 }
 <djtag>\s*","                   return "COMMA";
 <djtag>"for"                    return "FOR";
+<djtag>"endfor"                 return "ENDFOR";
 <djtag>"if"                     return "IF";
 <djtag>"elif"                   return "ELIF";
 <djtag>"else"                   return "ELSE";
+<djtag>"endif"                  return "ENDIF";
 <djtag>"extends"                return "EXTENDS";
 <djtag>"include"                return "IF";
 <djtag>"or"                     return "OR";

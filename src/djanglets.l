@@ -2,12 +2,21 @@
 %s comment escape
 
 %{
-  var prevState = 'INITIAL',
-    currentState = 'INITIAL';
+  if (!global.state) {
+    console.log("running");
+    global.state = ['INITIAL'];
+  }
   function setState(state, self) {
-    prevState = currentState;
-    currentState = state;
+    var previousState;
+    previousState = global.state[global.state.length - 1];
+    global.state.push(state);
     self.begin(state);
+  }
+  function prevState(self) {
+    var previousState;
+    global.state.pop();
+    previousState = global.state[global.state.length - 1];
+    self.begin(previousState);
   }
 %}
 
@@ -22,11 +31,11 @@
                                   return "TAG_CLOSER"
                                 }
 <tag>">"                        {
-                                  setState('INITIAL', this);
+                                  prevState(this);
                                   return "CLOSE_TAG"
                                 }
 <tag>"/>"                       {
-                                  setState('INITIAL', this);
+                                  prevState(this);
                                   return "SELF_TAG_CLOSER" 
                                 }
 <tag>["\"'"]                    {
@@ -35,7 +44,7 @@
                                 }
 <tag>\s+                        /* ignore */
 <attribval>["\"'"]              {
-                                  setState('tag', this)
+                                  prevState(this);
                                   return "END_QUOTE"
                                 }
 <attribval>"{%"\s*              {
@@ -50,7 +59,7 @@
                                   return "COMMENT_BEG"
                                 }
 <comment>"-->"                  {
-                                  setState('INITIAL', this);
+                                  prevState(this);
                                   return "COMMENT_END"
                                 }
 <comment>\s                     {
@@ -64,7 +73,7 @@
                                   return "OPEN_VAR";
                                 }
 <var>\s*"}}"                    {
-                                  setState('INITIAL', this);
+                                  prevState(this);
                                   return "CLOSE_VAR";
                                 }
 <INITIAL,tag>"{%"\s*            {
@@ -72,7 +81,7 @@
                                   return "OPEN_DJTAG";
                                 }
 <djtag>"%}"                     {
-                                  setState(prevState, this);
+                                  prevState(this);
                                   return "CLOSE_DJTAG";
                                 }
 <djtag>\s*","                   return "COMMA";
@@ -96,27 +105,32 @@
 <djtag>"<="                     return "LESS_THAN_EQUALS";
 <djtag>"True"                   return "TRUE";
 <djtag>"False"                  return "FALSE";
-<djtag>":"                      return "COLON";
-<djtag>"|"                      return "PIPE";
-<djtag>\-?[0-9]+(?:\.[0-9]+)?   return "NUMBER";
-<djtag>\s+                      /* ignore */
-<djtag>"\""                     {
+<djtag,var>":"                      return "COLON";
+<djtag,var>"|"                 return "PIPE";
+<djtag,var>\-?[0-9]+(?:\.[0-9]+)?   return "NUMBER";
+<djtag,var>\s+                      /* ignore */
+<djtag,var>"\""                     {
+                                  console.log("got double quote at beg");
                                   setState('doublequote', this);
+                                  console.log("done setting quotes and stuff beg");
                                   return "BEG_DJTAG_QUOTE";
                                 }
+<doublequote>([^"\""])+         return "STRING_CONTENT";
 <doublequote>"\""               {
-                                  setState('djtag', this);
+                                  console.log("got double quote at end");
+                                  prevState(this);
+                                  console.log("done setting quotes and stuff end");
                                   return "END_DJTAG_QUOTE";
                                 }
-<djtag>"'"                      {
+<djtag,var>"'"                      {
                                   setState('singlequote', this);
                                   return "BEG_DJTAG_QUOTE";
                                 }
+<singlequote>([^"'"])+          return "STRING_CONTENT";
 <singlequote>"'"                {
-                                  setState('djtag', this);
+                                  prevState(this);
                                   return "END_DJTAG_QUOTE";
                                 }
-<singlequote,doublequote>.      return "STRING_CONTENT";
 <INITIAL>"&#x"\d{4}";"          return "HTML_ENTITY";
 <INITIAL>"&"\w+";"              return "HTML_ENTITY";
 <tag,djtag>\w+                  return "WORD";
@@ -125,7 +139,7 @@
                                   setState('escape', this);
                                 }
 <escape>.                       {
-                                  setState('INITIAL', this);
+                                  prevState(this);
                                 }
 <<EOF>>                         return "EOF"
 <INITIAL>([^"<"\s])+            return "CONTENT"

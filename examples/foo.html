@@ -74,6 +74,40 @@
     </p>
       </div>
   </div>
+  <div>
+      <p>striptags filter var begins</p>
+      {{ striptagsvar|striptags }}
+  </div>
+  <div>
+      <p>default filter var begins</p>
+      {{ striptagsvar|default:"foo" }}
+  </div>
+  <div>
+      <p>nested filter var begins</p>
+      {{ striptagsvar|default:"foo"|length }}
+  </div>
+  <div>
+    <p>attribute if begins</p>
+    <span style="color: blue;{% if attrifvar %}background:yellow;{% endif %}">attr if</span>
+  </div>
+  <div>
+    <p>element if begins</p>
+    <span {% if eleifvar %}style="font-weight:bold;"{% endif %}>ele if</span>
+  </div>
+  <div>
+    <p>complex if begins</p>
+    {% if compA or not compB and compC %}
+    <p>complex if true</p>
+    {% endif %}
+    <p>complex if ends</p>
+  </div>
+  <div>
+    <p>comparison if begins</p>
+    {% if foocompare == "foo" %}
+      <p>compare if is foo</p>
+    {% endif %}
+    <p>compare if ends</p>
+  </div>
 </template>
 
 <template name="doo2">

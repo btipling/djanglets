@@ -114,7 +114,7 @@ html_entity
   ;
 
 variable
-  : OPEN_VAR WORD CLOSE_VAR -> yy.visitor.visitVariable(yy.ast, $2);
+  : OPEN_VAR djtag_variable CLOSE_VAR -> yy.visitor.visitVariable(yy.ast, $2);
   ;
 
 djtag
@@ -149,6 +149,7 @@ string
 
 djtag_variable
   : WORD
+  | WORD filters
   ;
 
 filters
@@ -157,9 +158,8 @@ filters
   ;
 
 filter
-  :
-  | PIPE WORD
-  | PIPE WORD COLON STRING
+  : PIPE WORD
+  | PIPE WORD COLON string
   ;
 
 iterator_expression

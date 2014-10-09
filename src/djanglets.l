@@ -51,6 +51,10 @@
                                   setState('djtag', this);
                                   return "OPEN_DJTAG";
                                 }
+<attribval>"{{"\*               {
+                                  setState('var', this);
+                                  return "OPEN_VAR";
+                                }
 <attribval>[^"\"'"]+            return "ATTRIB_CONTENT"
 <tag>"="                        return "EQUAL"
 

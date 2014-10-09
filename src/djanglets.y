@@ -81,6 +81,7 @@ attribute_value
 attribute_value_contents
   : djtag
   | attribute_string
+  | variable
   ;
 
 attribute_string

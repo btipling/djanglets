@@ -85,29 +85,12 @@ attribute_value_contents
   ;
 
 attribute_string
-  : ATTRIB_CONTENT
+  : ATTRIB_CONTENT -> yy.visitor.visitAttributeContent(yy.ast, $1);
   ;
 
 quote
-  : BEG_QUOTE
-  | END_QUOTE
-  ;
-
-attribute_content
-  : /* nothing */
-  | ATTRIB_CONTENT
-  ;
-
-non_variable_attr_content
-  : WORD
-  | contents
-  | non_variable_attr_content WORD
-  | non_variable_attr_content contents
-  ;
-
-words
-  : WORD
-  | words WORD
+  : BEG_QUOTE -> yy.visitor.visitAttribute(yy.ast);
+  | END_QUOTE -> yy.visitor.visitEndAttribute(yy.ast);
   ;
 
 html_entity
@@ -123,34 +106,34 @@ djtag
   ;
 
 open_djtag
-  : OPEN_DJTAG -> console.log("OPEN_DJTAG");
+  : OPEN_DJTAG -> yy.visitor.visitDJTag(yy.ast);
   ;
 
 close_djtag
-  : CLOSE_DJTAG -> console.log("CLOSE_DJTAG");
+  : CLOSE_DJTAG -> yy.visitor.visitEndDJTag(yy.ast);
   ;
 
 djtag_content
-  : WORD -> console.log("WORD", $1);
+  : WORD -> yy.visitor.visitDJTagWord(yy.ast, $1);
   | ELSE -> console.log("ELSE");
-  | BLOCK -> console.log("BLOCK");
-  | ENDIF -> console.log("ENDIF");
-  | ENDFOR -> console.log("ENDFOR");
-  | INCLUDE string -> console.log("INCLUDE", $2);
-  | EXTENDS string -> console.log("EXTENDS", $2);
-  | WORD djtag_variable -> console.log("word var", $2);
-  | FOR iterator_expression -> console.log("FOR");
-  | IF boolean_expressions -> console.log("IF", $2);
-  | ELIF boolean_expressions -> console.log("ELIF", $2);
+  | BLOCK -> yy.visitor.visitDJTagWord(yy.ast, $1);
+  | ENDIF -> yy.visitor.visitDJTagWord(yy.ast, $1);
+  | ENDFOR -> yy.visitor.visitDJTagWord(yy.ast, $1);
+  | INCLUDE string -> yy.visitor.visitInclude(yy.ast, $2);
+  | EXTENDS string -> yy.visitor.visitExtends(yy.ast, $2);
+  | WORD djtag_variable -> yy.visitor.visitCustomDJTag(yy.ast, $1, $2);
+  | FOR iterator_expression -> yy.visitor.visitCloseFor(yy.ast);
+  | IF boolean_expressions -> yy.visitor.visitCloseIf(yy.ast);
+  | ELIF boolean_expressions -> yy.visitor.visitCloseElif(yy.ast);
   ;
 
 string
-  : BEG_DJTAG_QUOTE STRING_CONTENT END_DJTAG_QUOTE -> console.log("string", $2);
+  : BEG_DJTAG_QUOTE STRING_CONTENT END_DJTAG_QUOTE -> $$ = $2
   ;
 
 djtag_variable
-  : WORD
-  | WORD filters
+  : WORD -> $$ = yy.visitor.visitDJTagVariable(yy.ast, $1);
+  | WORD filters -> $$ = yy.visitor.visitDJTagVariable(yy.ast, $1);
   ;
 
 filters
@@ -159,27 +142,33 @@ filters
   ;
 
 filter
-  : PIPE WORD
-  | PIPE WORD COLON string
+  : PIPE WORD -> yy.visitor.visitFilter(yy.ast, $2, null);
+  | PIPE WORD COLON string -> yy.visitor.visitFilter(yy.ast, $2, $4);
   ;
 
 iterator_expression
-  : djtag_variable IN djtag_variable -> console.log("single var for", $1, $3);
+  : djtag_variable IN djtag_variable -> yy.visitor.visitItertator(yy.ast, $1, null, $3);
   | djtag_variable COMMA djtag_variable IN djtag_variable {
-      console.log("double var for", $1, $3, $5);
+    yy.visitor.visitItertator(yy.ast, $1, $3, $5);
   }
   ;
 
 boolean_expressions
-  : boolean_expression
-  | boolean_expressions boolean_operator boolean_expression
-  | boolean_expressions NOT boolean_operator boolean_expression
+  : boolean_expression -> yy.visitor.visitCloseBoolean(yy.ast);
+  | boolean_expressions boolean_operator boolean_expression {
+      yy.visitor.visitCloseBoolean(yy.ast);
+  }
   ;
 
 boolean_expression
-  : NOT boolean_token
-  | boolean_token
-  | boolean_token comparison_operator boolean_token
+  : NOT boolean_token -> yy.visitor.visitBooleanExpression(true, $2, null, null);
+  | boolean_token -> yy.visitor.visitBooleanExpression(false, $1, null, null);
+  | boolean_token comparison_operator boolean_token {
+      yy.visitor.visitBooleanExpression(false, $1, $2, $3);
+  }
+  | boolean_token comparison_operator NOT boolean_token {
+      yy.visitor.visitBooleanExpression(true, $1, $2, $3);
+  }
   ;
 
 comparison_operator

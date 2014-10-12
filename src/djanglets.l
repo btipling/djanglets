@@ -100,6 +100,7 @@
 <djtag>"or"                     return "OR";
 <djtag>"and"                    return "AND";
 <djtag>"in"                     return "IN";
+<djtag>"not in"                 return "NOT_IN";
 <djtag>"not"                    return "NOT";
 <djtag>"=="                     return "EQUALS";
 <djtag>"!="                     return "NOT_EQUALS";
@@ -146,6 +147,6 @@
                                   prevState(this);
                                 }
 <<EOF>>                         return "EOF"
-<INITIAL>([^"<"\s])+            return "CONTENT"
+<INITIAL>([^<\s])+            return "CONTENT"
 
 %%

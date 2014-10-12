@@ -114,6 +114,18 @@
       Attrib var
     </span>
   </div>
+  <div>
+    <p>Check "in x" op</p>
+    {% if fooIn in fooIns %}
+    <p>Is is in.</p>
+    {% endif %}
+  </div>
+  <div>
+    <p>Check "not in x" op</p>
+    {% if fooIn not in fooIns %}
+    <p>Is is not in.</p>
+    {% endif %}
+  </div>
 </template>
 
 <template name="doo2">

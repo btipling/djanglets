@@ -98,7 +98,7 @@ html_entity
   ;
 
 variable
-  : OPEN_VAR djtag_variable CLOSE_VAR -> yy.visitor.visitVariable(yy.ast, $2);
+  : OPEN_VAR djtag_variable CLOSE_VAR -> $$ = yy.visitor.visitVariable(yy.ast, $2);
   ;
 
 djtag

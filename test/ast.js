@@ -47,6 +47,7 @@ module.exports = {
       currentText: '',
       nodeStack: [],
       currentAttributes: [],
+      inElement: false,
       ast: ["foo"],
     });
     test.done();

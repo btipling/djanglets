@@ -9,6 +9,7 @@ module.exports = {
     visitor = djAst.visitor;
     ast = djAst.createAst();
     visitor.visitOpenElement(ast, "template");
+    visitor.visitEndOpenTag(ast);
     callback();
   },
   tearDown: function (callback) {
@@ -68,6 +69,19 @@ module.exports = {
     }
     visitor.visitOpenElement(ast, "div");
     test.ok(ran, "Should have ended attributes.");
+    test.done();
+  },
+  testVisitOpenElementEntersElement: function (test) {
+    test.ok(!ast.state.inElement, "Should not start in an element.");
+    visitor.visitOpenElement(ast, "div");
+    test.ok(ast.state.inElement, "Should now be in an element.");
+    test.done();
+  },
+  testVisitEndOpenElement: function (test) {
+    visitor.visitOpenElement(ast, "div");
+    test.ok(ast.state.inElement, "Should now be in an element.");
+    visitor.visitEndOpenTag(ast);
+    test.ok(!ast.state.inElement, "Should not be in an element anymore.");
     test.done();
   },
 }

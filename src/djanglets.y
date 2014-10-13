@@ -25,8 +25,12 @@ complete_element
   ;
 
 open_tag
-  : OPEN_TAG WORD CLOSE_TAG -> yy.visitor.visitOpenElement(yy.ast, $2);
-  | OPEN_TAG WORD tag_contents CLOSE_TAG -> yy.visitor.visitOpenElement(yy.ast, $2);
+  : begin_open_tag CLOSE_TAG -> yy.visitor.visitEndOpenTag(yy.ast);
+  | begin_open_tag tag_contents CLOSE_TAG -> yy.visitor.visitEndOpenTag(yy.ast);
+  ;
+
+begin_open_tag
+  : OPEN_TAG WORD -> yy.visitor.visitOpenElement(yy.ast, $2);
   ;
 
 close_tag
@@ -34,10 +38,10 @@ close_tag
   ;
 
 self_closing_tag
-  : OPEN_TAG WORD SELF_TAG_CLOSER {
+  : begin_open_tag SELF_TAG_CLOSER {
       yy.visitor.visitSelfClosingElement(yy.ast, $2);
     }
-  | OPEN_TAG WORD tag_contents SELF_TAG_CLOSER  {
+  | begin_open_tag tag_contents SELF_TAG_CLOSER  {
       yy.visitor.visitSelfClosingElement(yy.ast, $2);
     }
   ;

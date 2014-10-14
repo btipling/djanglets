@@ -47,7 +47,7 @@ module.exports = {
       currentText: '',
       nodeStack: [],
       currentAttributes: [],
-      processState: djAst.Ast.states.INITIAL,
+      processState: [djAst.Ast.states.INITIAL],
       djTagStack: [],
       ast: ["foo"],
     });

@@ -88,4 +88,21 @@ module.exports = {
       "Should not be in an element anymore.");
     test.done();
   },
+  testVisitDJTag: function (test) {
+    test.notEqual(ast.getCurrentProcessState(), djAst.Ast.states.DJTAG,
+      "Should not be in DJTAG initially.");
+    visitor.visitDJTag(ast);
+    test.equal(ast.getCurrentProcessState(), djAst.Ast.states.DJTAG,
+      "Should now be in DJTAG.");
+    test.done();
+  },
+  testVisitEndDJTagPopsProcessState: function (test) {
+    visitor.visitDJTag(ast);
+    test.equal(ast.getCurrentProcessState(), djAst.Ast.states.DJTAG,
+      "Should be in DJTAG.");
+    visitor.visitEndDJTag(ast);
+    test.notEqual(ast.getCurrentProcessState(), djAst.Ast.states.DJTAG,
+      "Should no longer be in DJTAG.");
+    test.done();
+  },
 }

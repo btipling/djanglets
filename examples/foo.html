@@ -126,6 +126,12 @@
     <p>Is is not in.</p>
     {% endif %}
   </div>
+  <div>
+    <p>deeply nested element and attribute if begins</p>
+    <span {% if deepNestedElementIf %}
+          style="color: blue;{% if attrifvar %}background:{{attribval}};{% endif %}"
+          {% endif %}>attr if</span>
+  </div>
 </template>
 
 <template name="doo2">

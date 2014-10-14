@@ -72,16 +72,17 @@ module.exports = {
     test.done();
   },
   testVisitOpenElementEntersElement: function (test) {
-    test.ok(!ast.state.inElement, "Should not start in an element.");
+    test.equal(ast.state.processState, djAst.Ast.states.INITIAL, "Should not start in an element.");
     visitor.visitOpenElement(ast, "div");
-    test.ok(ast.state.inElement, "Should now be in an element.");
+    test.equal(ast.state.processState, djAst.Ast.states.ELEMENT, "Should now be in an element.");
     test.done();
   },
   testVisitEndOpenElement: function (test) {
     visitor.visitOpenElement(ast, "div");
-    test.ok(ast.state.inElement, "Should now be in an element.");
+    test.equal(ast.state.processState, djAst.Ast.states.ELEMENT, "Should now be in an element.");
     visitor.visitEndOpenTag(ast);
-    test.ok(!ast.state.inElement, "Should not be in an element anymore.");
+    test.equal(ast.state.processState, djAst.Ast.states.INITIAL,
+      "Should not be in an element anymore.");
     test.done();
   },
 }

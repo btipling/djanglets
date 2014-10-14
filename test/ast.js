@@ -12,7 +12,7 @@ module.exports = {
     callback();
   },
   testAstCreated: function (test) {
-    test.ok(djAst.ast.isPrototypeOf(ast), "Should have created an ast.");
+    test.ok(djAst.Ast.isPrototypeOf(ast), "Should have created an ast.");
     test.done();
   },
   testAstAddNode: function (test) {
@@ -47,7 +47,8 @@ module.exports = {
       currentText: '',
       nodeStack: [],
       currentAttributes: [],
-      inElement: false,
+      processState: djAst.Ast.states.INITIAL,
+      djTagStack: [],
       ast: ["foo"],
     });
     test.done();

@@ -192,9 +192,9 @@ comparison_operator
 
 boolean_token
   : djtag_variable
-  | TRUE
-  | FALSE
-  | NUMBER
+  | TRUE -> $$ = true;
+  | FALSE -> $$ = false;
+  | NUMBER -> $$ = Number($1);
   | string
   ;
 

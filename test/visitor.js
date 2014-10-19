@@ -105,4 +105,9 @@ module.exports = {
       "Should no longer be in DJTAG.");
     test.done();
   },
+  testVisitDJTagWord: function (test) {
+    visitor.visitDJTagWord(ast, "foo");
+    test.equal(ast.state.djTagStack[0], "foo", "Should have added to the djtag word stack.");
+    test.done();
+  },
 }

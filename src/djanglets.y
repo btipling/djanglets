@@ -119,16 +119,16 @@ close_djtag
 
 djtag_content
   : WORD -> yy.visitor.visitDJTagWord(yy.ast, $1);
-  | ELSE -> console.log("ELSE");
-  | BLOCK -> yy.visitor.visitDJTagWord(yy.ast, $1);
+  | ELSE -> yy.visitor.visitDJTagWord(yy.ast, $1);
   | ENDIF -> yy.visitor.visitDJTagWord(yy.ast, $1);
   | ENDFOR -> yy.visitor.visitDJTagWord(yy.ast, $1);
   | INCLUDE string -> yy.visitor.visitInclude(yy.ast, $2);
   | EXTENDS string -> yy.visitor.visitExtends(yy.ast, $2);
+  | BLOCK string -> yy.visitor.visitBlock(yy.ast, $1);
   | WORD djtag_variable -> yy.visitor.visitCustomDJTag(yy.ast, $1, $2);
-  | FOR iterator_expression -> yy.visitor.visitCloseFor(yy.ast);
-  | IF boolean_expressions -> yy.visitor.visitCloseIf(yy.ast);
-  | ELIF boolean_expressions -> yy.visitor.visitCloseElif(yy.ast);
+  | FOR iterator_expression ->  yy.visitor.visitDJTagWord(yy.ast, $1);
+  | IF boolean_expressions -> yy.visitor.visitDJTagWord(yy.ast, $1);
+  | ELIF boolean_expressions ->  yy.visitor.visitDJTagWord(yy.ast, $1);
   ;
 
 string
@@ -158,9 +158,9 @@ iterator_expression
   ;
 
 boolean_expressions
-  : boolean_expression -> yy.visitor.visitCloseBoolean(yy.ast);
+  : boolean_expression -> yy.visitor.visitExtendBoolean(yy.ast, null);
   | boolean_expressions boolean_operator boolean_expression {
-      yy.visitor.visitCloseBoolean(yy.ast);
+      yy.visitor.visitExtendBoolean(yy.ast, $2);
   }
   ;
 

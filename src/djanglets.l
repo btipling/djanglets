@@ -115,16 +115,12 @@
 <djtag,var>\-?[0-9]+(?:\.[0-9]+)?   return "NUMBER";
 <djtag,var>\s+                      /* ignore */
 <djtag,var>"\""                     {
-                                  console.log("got double quote at beg");
                                   setState('doublequote', this);
-                                  console.log("done setting quotes and stuff beg");
                                   return "BEG_DJTAG_QUOTE";
                                 }
 <doublequote>([^"\""])+         return "STRING_CONTENT";
 <doublequote>"\""               {
-                                  console.log("got double quote at end");
                                   prevState(this);
-                                  console.log("done setting quotes and stuff end");
                                   return "END_DJTAG_QUOTE";
                                 }
 <djtag,var>"'"                      {

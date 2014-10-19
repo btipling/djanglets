@@ -136,18 +136,22 @@ string
   ;
 
 djtag_variable
-  : WORD -> $$ = yy.visitor.visitDJTagVariable(yy.ast, $1);
-  | WORD filters -> $$ = yy.visitor.visitDJTagVariable(yy.ast, $1);
+  : WORD {
+     $$ = yy.visitor.visitDJTagVariable(yy.ast, $1, []);
+  }
+  | WORD filters {
+     $$ = yy.visitor.visitDJTagVariable(yy.ast, $1, $2);
+  }
   ;
 
 filters
   : filter
-  | filters filter
+  | filters filter -> $$ = yy.visitor.visitFilters(yy.ast, $1, $2);
   ;
 
 filter
-  : PIPE WORD -> yy.visitor.visitFilter(yy.ast, $2, null);
-  | PIPE WORD COLON string -> yy.visitor.visitFilter(yy.ast, $2, $4);
+  : PIPE WORD -> $$ = yy.visitor.visitFilter(yy.ast, $2, null);
+  | PIPE WORD COLON string -> $$ = yy.visitor.visitFilter(yy.ast, $2, $4);
   ;
 
 iterator_expression
@@ -165,13 +169,13 @@ boolean_expressions
   ;
 
 boolean_expression
-  : NOT boolean_token -> yy.visitor.visitBooleanExpression(true, $2, null, null);
-  | boolean_token -> yy.visitor.visitBooleanExpression(false, $1, null, null);
+  : NOT boolean_token -> yy.visitor.visitBooleanExpression(yy.ast, true, $2, null, null);
+  | boolean_token -> yy.visitor.visitBooleanExpression(yy.ast, false, $1, null, null);
   | boolean_token comparison_operator boolean_token {
-      yy.visitor.visitBooleanExpression(false, $1, $2, $3);
+      yy.visitor.visitBooleanExpression(yy.ast, false, $1, $2, $3);
   }
   | boolean_token comparison_operator NOT boolean_token {
-      yy.visitor.visitBooleanExpression(true, $1, $2, $3);
+      yy.visitor.visitBooleanExpression(yy.ast, true, $1, $2, $3);
   }
   ;
 

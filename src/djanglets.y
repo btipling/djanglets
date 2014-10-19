@@ -126,9 +126,9 @@ djtag_content
   | EXTENDS string -> yy.visitor.visitExtends(yy.ast, $2);
   | BLOCK string -> yy.visitor.visitBlock(yy.ast, $1);
   | WORD djtag_variable -> yy.visitor.visitCustomDJTag(yy.ast, $1, $2);
-  | FOR iterator_expression ->  yy.visitor.visitDJTagWord(yy.ast, $1);
-  | IF boolean_expressions -> yy.visitor.visitDJTagWord(yy.ast, $1);
-  | ELIF boolean_expressions ->  yy.visitor.visitDJTagWord(yy.ast, $1);
+  | FOR iterator_expression ->  yy.visitor.visitDJTagWord(yy.ast, $1, $2);
+  | IF boolean_expressions -> yy.visitor.visitDJTagWord(yy.ast, $1, $2);
+  | ELIF boolean_expressions ->  yy.visitor.visitDJTagWord(yy.ast, $1, $2);
   ;
 
 string
@@ -162,20 +162,20 @@ iterator_expression
   ;
 
 boolean_expressions
-  : boolean_expression -> yy.visitor.visitExtendBoolean(yy.ast, null);
+  : boolean_expression
   | boolean_expressions boolean_operator boolean_expression {
-      yy.visitor.visitExtendBoolean(yy.ast, $2);
+      $$ = yy.visitor.visitExtendBoolean(yy.ast, $1, $2, $3);
   }
   ;
 
 boolean_expression
-  : NOT boolean_token -> yy.visitor.visitBooleanExpression(yy.ast, true, $2, null, null);
-  | boolean_token -> yy.visitor.visitBooleanExpression(yy.ast, false, $1, null, null);
+  : NOT boolean_token -> $$ = yy.visitor.visitBooleanExpression(yy.ast, true, $2, null, null);
+  | boolean_token -> $$ = yy.visitor.visitBooleanExpression(yy.ast, false, $1, null, null);
   | boolean_token comparison_operator boolean_token {
-      yy.visitor.visitBooleanExpression(yy.ast, false, $1, $2, $3);
+      $$ = yy.visitor.visitBooleanExpression(yy.ast, false, $1, $2, $3);
   }
   | boolean_token comparison_operator NOT boolean_token {
-      yy.visitor.visitBooleanExpression(yy.ast, true, $1, $2, $3);
+      $$ = yy.visitor.visitBooleanExpression(yy.ast, true, $1, $2, $3);
   }
   ;
 

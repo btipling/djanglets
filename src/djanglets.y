@@ -106,15 +106,7 @@ variable
   ;
 
 djtag
-  : open_djtag djtag_content close_djtag
-  ;
-
-open_djtag
-  : OPEN_DJTAG -> yy.visitor.visitDJTag(yy.ast);
-  ;
-
-close_djtag
-  : CLOSE_DJTAG -> yy.visitor.visitEndDJTag(yy.ast);
+  : OPEN_DJTAG djtag_content CLOSE_DJTAG
   ;
 
 djtag_content

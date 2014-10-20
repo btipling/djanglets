@@ -72,7 +72,7 @@ tag_content
   ;
 
 attribute
-  : WORD EQUAL quote attribute_value quote {
+  : WORD EQUAL BEG_QUOTE attribute_value END_QUOTE {
       yy.visitor.visitAttribute(yy.ast, $1, $4);
     }
   ;
@@ -90,11 +90,6 @@ attribute_value_contents
 
 attribute_string
   : ATTRIB_CONTENT -> yy.visitor.visitAttributeContent(yy.ast, $1);
-  ;
-
-quote
-  : BEG_QUOTE -> yy.visitor.visitAttribute(yy.ast);
-  | END_QUOTE -> yy.visitor.visitEndAttribute(yy.ast);
   ;
 
 html_entity
@@ -147,9 +142,9 @@ filter
   ;
 
 iterator_expression
-  : djtag_variable IN djtag_variable -> yy.visitor.visitItertator(yy.ast, $1, null, $3);
+  : djtag_variable IN djtag_variable -> $$ = yy.visitor.visitItertator(yy.ast, null, $1, $3);
   | djtag_variable COMMA djtag_variable IN djtag_variable {
-    yy.visitor.visitItertator(yy.ast, $1, $3, $5);
+    $$ = yy.visitor.visitItertator(yy.ast, $1, $3, $5);
   }
   ;
 

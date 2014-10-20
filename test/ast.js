@@ -48,7 +48,6 @@ module.exports = {
       nodeStack: [],
       currentAttributes: [],
       processState: [djAst.Ast.states.INITIAL],
-      djTagStack: [],
       ast: ["foo"],
     });
     test.done();

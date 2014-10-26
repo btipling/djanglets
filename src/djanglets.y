@@ -72,24 +72,20 @@ tag_content
   ;
 
 attribute
-  : WORD EQUAL BEG_QUOTE attribute_value END_QUOTE {
+  : WORD EQUAL BEG_QUOTE attribute_contents END_QUOTE {
       yy.visitor.visitAttribute(yy.ast, $1, $4);
     }
   ;
 
-attribute_value
-  : attribute_value_contents
-  | attribute_value attribute_value_contents
+ attribute_contents
+  : attribute_content
+  | attribute_contents attribute_content -> $$ = yy.visitor.visitAttributeContents(yy.ast, $1, $2);
   ;
 
-attribute_value_contents
-  : djtag
-  | attribute_string
-  | variable
-  ;
-
-attribute_string
-  : ATTRIB_CONTENT -> yy.visitor.visitAttributeContent(yy.ast, $1);
+attribute_content
+  : djtag -> $$ = yy.visitor.visitAttributeContent(yy.ast, $1);
+  | ATTRIB_CONTENT -> $$ = yy.visitor.visitAttributeContent(yy.ast, $1);
+  | variable -> $$ = yy.visitor.visitAttributeContent(yy.ast, $1);
   ;
 
 html_entity
@@ -101,7 +97,7 @@ variable
   ;
 
 djtag
-  : OPEN_DJTAG djtag_content CLOSE_DJTAG
+  : OPEN_DJTAG djtag_content CLOSE_DJTAG -> $$ = ""
   ;
 
 djtag_content
@@ -133,7 +129,7 @@ djtag_variable
 
 filters
   : filter
-  | filters filter -> $$ = yy.visitor.visitFilters(yy.ast, $1, $2);
+  | filters filter -> $$ = yy.visitor.concat(yy.ast, $1, $2);
   ;
 
 filter

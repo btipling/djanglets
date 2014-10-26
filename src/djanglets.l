@@ -16,6 +16,7 @@
     var previousState;
     global.state.pop();
     previousState = global.state[global.state.length - 1];
+    //console.log("previousState", previousState);
     self.begin(previousState);
   }
 %}
@@ -39,6 +40,7 @@
                                   return "SELF_TAG_CLOSER" 
                                 }
 <tag>["\"'"]                    {
+                                  console.log("into attribval");
                                   setState('attribval', this)
                                   return "BEG_QUOTE"
                                 }
@@ -48,14 +50,21 @@
                                   return "END_QUOTE"
                                 }
 <attribval>"{%"\s*              {
+                                  console.log("into attrib djtag");
                                   setState('djtag', this);
                                   return "OPEN_DJTAG";
                                 }
-<attribval>"{{"\*               {
+<attribval>"{{"\s*              {
+                                  console.log("found attrib variable");
                                   setState('var', this);
                                   return "OPEN_VAR";
                                 }
-<attribval>[^"\"'"]+            return "ATTRIB_CONTENT"
+<attribval>\s                   {
+                                  return "ATTRIB_CONTENT"
+                                }
+<attribval>.                    {
+                                  return "ATTRIB_CONTENT"
+                                }
 <tag>"="                        return "EQUAL"
 
 <INITIAL>"<!--"                 {
@@ -86,6 +95,7 @@
                                 }
 <djtag>"%}"                     {
                                   prevState(this);
+                                  console.log("closing djtajg", global.state);
                                   return "CLOSE_DJTAG";
                                 }
 <djtag>\s*","                   return "COMMA";

@@ -19,14 +19,14 @@ complete_elements
   ;
 
 complete_element
-  : open_tag close_tag
-  | open_tag element_content close_tag
-  | self_closing_tag
+  : open_tag close_tag -> $$ = yy.visitor.visitCloseElement(yy.ast, []);
+  | open_tag element_contents close_tag -> $$ = yy.visitor.visitCloseElement(yy.ast, $2);
+  | self_closing_tag -> $$ = yy.visitor.visitCloseElement(yy.ast, []);
   ;
 
 open_tag
-  : begin_open_tag CLOSE_TAG -> yy.visitor.visitEndOpenTag(yy.ast);
-  | begin_open_tag tag_contents CLOSE_TAG -> yy.visitor.visitEndOpenTag(yy.ast);
+  : begin_open_tag CLOSE_TAG -> yy.visitor.visitEndOpenTag(yy.ast, []);
+  | begin_open_tag tag_contents CLOSE_TAG -> yy.visitor.visitEndOpenTag(yy.ast, $2);
   ;
 
 begin_open_tag
@@ -34,16 +34,21 @@ begin_open_tag
   ;
 
 close_tag
-  : TAG_CLOSER WORD CLOSE_TAG -> yy.visitor.visitCloseElement(yy.ast, $2);
+  : TAG_CLOSER WORD CLOSE_TAG
   ;
 
 self_closing_tag
   : begin_open_tag SELF_TAG_CLOSER {
-      yy.visitor.visitSelfClosingElement(yy.ast, $2);
+      yy.visitor.visitSelfClosingElement(yy.ast, []);
     }
   | begin_open_tag tag_contents SELF_TAG_CLOSER  {
       yy.visitor.visitSelfClosingElement(yy.ast, $2);
     }
+  ;
+
+element_contents
+  : element_content -> $$ = yy.visitor.wrap($1);
+  | element_contents element_content -> $$ = yy.visitor.concat($1, $2);
   ;
 
 element_content
@@ -53,12 +58,6 @@ element_content
   | djtag
   | comment
   | html_entity
-  | element_content complete_element
-  | element_content contents
-  | element_content variable
-  | element_content djtag
-  | element_content comment
-  | element_content html_entity
   ;
 
 tag_contents
@@ -78,14 +77,14 @@ attribute
   ;
 
  attribute_contents
-  : attribute_content
-  | attribute_contents attribute_content -> $$ = yy.visitor.visitAttributeContents(yy.ast, $1, $2);
+  : attribute_content -> $$ = yy.visitor.wrap($1);
+  | attribute_contents attribute_content -> $$ = yy.visitor.concat($1, $2);
   ;
 
 attribute_content
-  : djtag -> $$ = yy.visitor.visitAttributeContent(yy.ast, $1);
-  | ATTRIB_CONTENT -> $$ = yy.visitor.visitAttributeContent(yy.ast, $1);
-  | variable -> $$ = yy.visitor.visitAttributeContent(yy.ast, $1);
+  : djtag
+  | ATTRIB_CONTENT
+  | variable
   ;
 
 html_entity
@@ -97,21 +96,21 @@ variable
   ;
 
 djtag
-  : OPEN_DJTAG djtag_content CLOSE_DJTAG -> $$ = ""
+  : OPEN_DJTAG djtag_content CLOSE_DJTAG -> $$ = $2
   ;
 
 djtag_content
-  : WORD -> yy.visitor.visitDJTagWord(yy.ast, $1);
-  | ELSE -> yy.visitor.visitDJTagWord(yy.ast, $1);
-  | ENDIF -> yy.visitor.visitDJTagWord(yy.ast, $1);
-  | ENDFOR -> yy.visitor.visitDJTagWord(yy.ast, $1);
-  | INCLUDE string -> yy.visitor.visitInclude(yy.ast, $2);
-  | EXTENDS string -> yy.visitor.visitExtends(yy.ast, $2);
-  | BLOCK string -> yy.visitor.visitBlock(yy.ast, $1);
-  | WORD djtag_variable -> yy.visitor.visitCustomDJTag(yy.ast, $1, $2);
-  | FOR iterator_expression ->  yy.visitor.visitDJTagWord(yy.ast, $1, $2);
-  | IF boolean_expressions -> yy.visitor.visitDJTagWord(yy.ast, $1, $2);
-  | ELIF boolean_expressions ->  yy.visitor.visitDJTagWord(yy.ast, $1, $2);
+  : WORD -> $$ = yy.visitor.visitDJTagWord(yy.ast, $1);
+  | ELSE -> $$ = yy.visitor.visitDJTagWord(yy.ast, $1);
+  | ENDIF -> $$ = yy.visitor.visitDJTagWord(yy.ast, $1);
+  | ENDFOR -> $$ = yy.visitor.visitDJTagWord(yy.ast, $1);
+  | INCLUDE string -> $$ = yy.visitor.visitInclude(yy.ast, $2);
+  | EXTENDS string -> $$ = yy.visitor.visitExtends(yy.ast, $2);
+  | BLOCK string -> $$ = yy.visitor.visitBlock(yy.ast, $1);
+  | WORD djtag_variable -> $$ = yy.visitor.visitCustomDJTag(yy.ast, $1, $2);
+  | FOR iterator_expression -> $$ = yy.visitor.visitDJTagWord(yy.ast, $1, $2);
+  | IF boolean_expressions -> $$ = yy.visitor.visitDJTagWord(yy.ast, $1, $2);
+  | ELIF boolean_expressions -> $$ = yy.visitor.visitDJTagWord(yy.ast, $1, $2);
   ;
 
 string
@@ -129,7 +128,7 @@ djtag_variable
 
 filters
   : filter
-  | filters filter -> $$ = yy.visitor.concat(yy.ast, $1, $2);
+  | filters filter -> $$ = yy.visitor.concat($1, $2);
   ;
 
 filter
@@ -196,8 +195,8 @@ comment_content
   ;
 
 contents
-  : CONTENT -> yy.visitor.visitText(yy.ast, $1);
-  | SPACE -> yy.visitor.visitText(yy.ast, " ");
+  : CONTENT
+  | SPACE
   ;
 
 %%

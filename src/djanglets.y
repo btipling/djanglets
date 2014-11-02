@@ -19,27 +19,36 @@ complete_elements
   ;
 
 complete_element
-  : open_tag close_tag
-  | open_tag element_content close_tag
-  | self_closing_tag
+  : open_tag close_tag -> $$ = yy.visitor.visitCloseElement(yy.ast, []);
+  | open_tag element_contents close_tag -> $$ = yy.visitor.visitCloseElement(yy.ast, $2);
+  | self_closing_tag -> $$ = yy.visitor.visitCloseElement(yy.ast, []);
   ;
 
 open_tag
-  : OPEN_TAG WORD CLOSE_TAG -> yy.visitor.visitOpenElement(yy.ast, $2);
-  | OPEN_TAG WORD attributes CLOSE_TAG -> yy.visitor.visitOpenElement(yy.ast, $2);
+  : begin_open_tag CLOSE_TAG -> yy.visitor.visitEndOpenTag(yy.ast, []);
+  | begin_open_tag tag_contents CLOSE_TAG -> yy.visitor.visitEndOpenTag(yy.ast, $2);
+  ;
+
+begin_open_tag
+  : OPEN_TAG WORD -> yy.visitor.visitOpenElement(yy.ast, $2);
   ;
 
 close_tag
-  : TAG_CLOSER WORD CLOSE_TAG -> yy.visitor.visitCloseElement(yy.ast, $2);
+  : TAG_CLOSER WORD CLOSE_TAG
   ;
 
 self_closing_tag
-  : OPEN_TAG WORD SELF_TAG_CLOSER {
+  : begin_open_tag SELF_TAG_CLOSER {
+      yy.visitor.visitSelfClosingElement(yy.ast, []);
+    }
+  | begin_open_tag tag_contents SELF_TAG_CLOSER  {
       yy.visitor.visitSelfClosingElement(yy.ast, $2);
     }
-  | OPEN_TAG WORD attributes SELF_TAG_CLOSER  {
-      yy.visitor.visitSelfClosingElement(yy.ast, $2);
-    }
+  ;
+
+element_contents
+  : element_content -> $$ = yy.visitor.wrap($1);
+  | element_contents element_content -> $$ = yy.visitor.concat($1, $2);
   ;
 
 element_content
@@ -49,50 +58,33 @@ element_content
   | djtag
   | comment
   | html_entity
-  | element_content complete_element
-  | element_content contents
-  | element_content variable
-  | element_content djtag
-  | element_content comment
-  | element_content html_entity
   ;
 
-attributes
+tag_contents
+  : tag_content
+  | tag_contents tag_content
+  ;
+
+tag_content
   : attribute
-  | TAG_SPACE
-  | attributes attribute
-  | attributes TAG_SPACE
+  | djtag
   ;
 
 attribute
-  : WORD EQUAL quote attribute_content quote {
+  : WORD EQUAL BEG_QUOTE attribute_contents END_QUOTE {
       yy.visitor.visitAttribute(yy.ast, $1, $4);
     }
   ;
 
-quote
-  : BEG_QUOTE
-  | END_QUOTE
+ attribute_contents
+  : attribute_content -> $$ = yy.visitor.wrap($1);
+  | attribute_contents attribute_content -> $$ = yy.visitor.concat($1, $2);
   ;
 
 attribute_content
-  : /* nothing */
+  : djtag
   | ATTRIB_CONTENT
-  ;
-
-non_variable_attr_content
-  : WORD
-  | contents
-  | TAG_SPACE
-  | non_variable_attr_content WORD
-  | non_variable_attr_content contents
-  | non_variable_attr_content TAG_SPACE
-  ;
-
-words
-  : WORD
-  | words TAG_SPACE
-  | words WORD
+  | variable
   ;
 
 html_entity
@@ -100,24 +92,101 @@ html_entity
   ;
 
 variable
-  : OPEN_VAR WORD CLOSE_VAR -> yy.visitor.visitVariable(yy.ast, $2);
+  : OPEN_VAR djtag_variable CLOSE_VAR -> $$ = yy.visitor.visitVariable(yy.ast, $2);
   ;
 
 djtag
-  : OPEN_DJTAG WORD SPACE WORD SPACE CLOSE_DJTAG -> yy.visitor.visitComputeDjtag(yy.ast, $2, $4);
-  | OPEN_DJTAG WORD SPACE CLOSE_DJTAG -> yy.visitor.visitSignalDjtag(yy.ast, $2);
-  /* {% for value in something %} */
-  | OPEN_DJTAG WORD SPACE WORD SPACE WORD SPACE WORD SPACE CLOSE_DJTAG {
-      yy.visitor.visitForDjtag(yy.ast, $2, null, $4, $6, $8);
-    }
-  /* {% for key, value in something %} */
-  | OPEN_DJTAG WORD SPACE WORD COMMA SPACE WORD SPACE WORD SPACE WORD SPACE CLOSE_DJTAG {
-      yy.visitor.visitForDjtag(yy.ast, $2, $4, $7, $9, $11);
-    }
+  : OPEN_DJTAG djtag_content CLOSE_DJTAG -> $$ = $2
+  ;
+
+djtag_content
+  : WORD -> $$ = yy.visitor.visitDJTagWord(yy.ast, $1);
+  | ELSE -> $$ = yy.visitor.visitDJTagWord(yy.ast, $1);
+  | ENDIF -> $$ = yy.visitor.visitDJTagWord(yy.ast, $1);
+  | ENDFOR -> $$ = yy.visitor.visitDJTagWord(yy.ast, $1);
+  | INCLUDE string -> $$ = yy.visitor.visitInclude(yy.ast, $2);
+  | EXTENDS string -> $$ = yy.visitor.visitExtends(yy.ast, $2);
+  | BLOCK string -> $$ = yy.visitor.visitBlock(yy.ast, $1);
+  | WORD djtag_variable -> $$ = yy.visitor.visitCustomDJTag(yy.ast, $1, $2);
+  | FOR iterator_expression -> $$ = yy.visitor.visitDJTagWord(yy.ast, $1, $2);
+  | IF boolean_expressions -> $$ = yy.visitor.visitDJTagWord(yy.ast, $1, $2);
+  | ELIF boolean_expressions -> $$ = yy.visitor.visitDJTagWord(yy.ast, $1, $2);
+  ;
+
+string
+  : BEG_DJTAG_QUOTE STRING_CONTENT END_DJTAG_QUOTE -> $$ = $2
+  ;
+
+djtag_variable
+  : WORD {
+     $$ = yy.visitor.visitDJTagVariable(yy.ast, $1, []);
+  }
+  | WORD filters {
+     $$ = yy.visitor.visitDJTagVariable(yy.ast, $1, $2);
+  }
+  ;
+
+filters
+  : filter
+  | filters filter -> $$ = yy.visitor.concat($1, $2);
+  ;
+
+filter
+  : PIPE WORD -> $$ = yy.visitor.visitFilter(yy.ast, $2, null);
+  | PIPE WORD COLON string -> $$ = yy.visitor.visitFilter(yy.ast, $2, $4);
+  ;
+
+iterator_expression
+  : djtag_variable IN djtag_variable -> $$ = yy.visitor.visitItertator(yy.ast, null, $1, $3);
+  | djtag_variable COMMA djtag_variable IN djtag_variable {
+    $$ = yy.visitor.visitItertator(yy.ast, $1, $3, $5);
+  }
+  ;
+
+boolean_expressions
+  : boolean_expression
+  | boolean_expressions boolean_operator boolean_expression {
+      $$ = yy.visitor.visitExtendBoolean(yy.ast, $1, $2, $3);
+  }
+  ;
+
+boolean_expression
+  : NOT boolean_token -> $$ = yy.visitor.visitBooleanExpression(yy.ast, true, $2, null, null);
+  | boolean_token -> $$ = yy.visitor.visitBooleanExpression(yy.ast, false, $1, null, null);
+  | boolean_token comparison_operator boolean_token {
+      $$ = yy.visitor.visitBooleanExpression(yy.ast, false, $1, $2, $3);
+  }
+  | boolean_token comparison_operator NOT boolean_token {
+      $$ = yy.visitor.visitBooleanExpression(yy.ast, true, $1, $2, $3);
+  }
+  ;
+
+comparison_operator
+  : EQUALS
+  | NOT_EQUALS
+  | GREATER_THAN
+  | LESS_THAN
+  | GREATER_THAN_EQUALS
+  | LESS_THAN_EQUALS
+  | IN
+  | NOT_IN
+  ;
+
+boolean_token
+  : djtag_variable
+  | TRUE -> $$ = true;
+  | FALSE -> $$ = false;
+  | NUMBER -> $$ = Number($1);
+  | string
+  ;
+
+boolean_operator
+  : OR
+  | AND
   ;
 
 comment
-  : COMMENT_BEGIN comment_content COMMENT_END
+  : COMMENT_BEG comment_content COMMENT_END
   ;
 
 comment_content
@@ -126,8 +195,8 @@ comment_content
   ;
 
 contents
-  : CONTENT -> yy.visitor.visitText(yy.ast, $1);
-  | SPACE -> yy.visitor.visitText(yy.ast, " ");
+  : CONTENT
+  | SPACE
   ;
 
 %%

@@ -74,6 +74,64 @@
     </p>
       </div>
   </div>
+  <div>
+      <p>striptags filter var begins</p>
+      {{ striptagsvar|striptags }}
+  </div>
+  <div>
+      <p>default filter var begins</p>
+      {{ striptagsvar|default:"foo" }}
+  </div>
+  <div>
+      <p>nested filter var begins</p>
+      {{ striptagsvar|default:"foowithLength"|length }}
+  </div>
+  <div>
+    <p>attribute if begins</p>
+    <span style="color: blue;{% if attrifvar %}background:yellow;{% endif %}">attr if</span>
+  </div>
+  <div>
+    <p>element if begins</p>
+    <span {% if eleifvar %}style="font-weight:bold;"{% endif %}>ele if</span>
+  </div>
+  <div>
+    <p>complex if begins</p>
+    {% if compA or not compB and compC %}
+    <p>complex if true</p>
+    {% endif %}
+    <p>complex if ends</p>
+  </div>
+  <div>
+    <p>comparison if begins</p>
+    {% if foocompare == "foo" %}
+      <p>compare if is foo</p>
+    {% endif %}
+    <p>compare if ends</p>
+  </div>
+  <div>
+    <p>variable in an attribute</p>
+    <span style="display:{{ attribvar }}">
+      Attrib var
+    </span>
+  </div>
+  <div>
+    <p>Check "in x" op</p>
+    {% if fooIn in fooIns %}
+    <p>Is is in.</p>
+    {% endif %}
+  </div>
+  <div>
+    <p>Check "not in x" op</p>
+    {% if fooIn not in fooIns %}
+    <p>Is is not in.</p>
+    {% endif %}
+  </div>
+  <div>
+    <p>deeply nested element and attribute if begins</p>
+    <span {% if deepNestedElementIf %}
+          style="color: blue;{% if attrifvar %}background:{{attribval}};{% endif %}"
+          {% endif %}>attr if</span>
+  </div>
 </template>
 
 <template name="doo2">

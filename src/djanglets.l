@@ -1,42 +1,78 @@
-%x tag var attribval djtag
+%x tag var attribval djtag singlequote doublequote
 %s comment escape
 
+%{
+  if (!global.state) {
+    console.log("running");
+    global.state = ['INITIAL'];
+  }
+  function setState(state, self) {
+    var previousState;
+    previousState = global.state[global.state.length - 1];
+    global.state.push(state);
+    self.begin(state);
+  }
+  function prevState(self) {
+    var previousState;
+    global.state.pop();
+    previousState = global.state[global.state.length - 1];
+    //console.log("previousState", previousState);
+    self.begin(previousState);
+  }
+%}
+
 %%
-<tag>\s+                        return "TAG_SPACE"
-<INITIAL,djtag>\s+              return "SPACE"
+<INITIAL>\s+                    return "SPACE"
 <INITIAL>"<"/\w+                {
-                                  this.begin('tag');
+                                  setState('tag', this);
                                   return "OPEN_TAG"
                                 }
 <INITIAL>"</"/\w+               {
-                                  this.begin('tag');
+                                  setState('tag', this);
                                   return "TAG_CLOSER"
                                 }
 <tag>">"                        {
-                                  this.begin('INITIAL');
+                                  prevState(this);
                                   return "CLOSE_TAG"
                                 }
 <tag>"/>"                       {
-                                  this.begin('INITIAL');
+                                  prevState(this);
                                   return "SELF_TAG_CLOSER" 
                                 }
 <tag>["\"'"]                    {
-                                  this.begin('attribval')
+                                  console.log("into attribval");
+                                  setState('attribval', this)
                                   return "BEG_QUOTE"
                                 }
+<tag>\s+                        /* ignore */
 <attribval>["\"'"]              {
-                                  this.begin('tag')
+                                  prevState(this);
                                   return "END_QUOTE"
                                 }
-<attribval>[^"\"'"]+            return "ATTRIB_CONTENT"
+<attribval>"{%"\s*              {
+                                  console.log("into attrib djtag");
+                                  setState('djtag', this);
+                                  return "OPEN_DJTAG";
+                                }
+<attribval>"{{"\s*              {
+                                  console.log("found attrib variable");
+                                  setState('var', this);
+                                  return "OPEN_VAR";
+                                }
+<attribval>\s                   {
+                                  return "ATTRIB_CONTENT"
+                                }
+<attribval>.                    {
+                                  return "ATTRIB_CONTENT"
+                                }
 <tag>"="                        return "EQUAL"
 
 <INITIAL>"<!--"                 {
-                                  this.begin('comment')
-                                  return "COMMENT_BEGIN"
+                                  setState('comment', this)
+                                  return "COMMENT_BEG"
                                 }
 <comment>"-->"                  {
-                                  this.begin('INITIAL');
+                                  prevState(this);
                                   return "COMMENT_END"
                                 }
 <comment>\s                     {
@@ -45,36 +81,78 @@
 <comment>.                      {
                                   return "COMMENT_CONTENT"
                                 }
-
-
 <INITIAL,tag>"{{"\s*            {
-                                  this.begin('var');
-                                  return "OPEN_VAR"
+                                  setState('var', this);
+                                  return "OPEN_VAR";
                                 }
 <var>\s*"}}"                    {
-                                  this.begin('INITIAL');
-                                  return "CLOSE_VAR"
+                                  prevState(this);
+                                  return "CLOSE_VAR";
                                 }
 <INITIAL,tag>"{%"\s*            {
-                                  this.begin('djtag');
-                                  return "OPEN_DJTAG"
+                                  setState('djtag', this);
+                                  return "OPEN_DJTAG";
                                 }
 <djtag>"%}"                     {
-                                  this.begin('INITIAL');
-                                  return "CLOSE_DJTAG"
+                                  prevState(this);
+                                  console.log("closing djtajg", global.state);
+                                  return "CLOSE_DJTAG";
                                 }
-<djtag>\s*","                   return "COMMA"
-<INITIAL>"&#x"\d{4}";"          return "HTML_ENTITY"
-<INITIAL>"&"\w+";"              return "HTML_ENTITY"
-<tag,djtag>\w+                  return "WORD"
-<var>[\w"."]+                   return "WORD"
+<djtag>\s*","                   return "COMMA";
+<djtag>"for"                    return "FOR";
+<djtag>"endfor"                 return "ENDFOR";
+<djtag>"if"                     return "IF";
+<djtag>"elif"                   return "ELIF";
+<djtag>"else"                   return "ELSE";
+<djtag>"endif"                  return "ENDIF";
+<djtag>"extends"                return "EXTENDS";
+<djtag>"include"                return "IF";
+<djtag>"or"                     return "OR";
+<djtag>"and"                    return "AND";
+<djtag>"in"                     return "IN";
+<djtag>"not in"                 return "NOT_IN";
+<djtag>"not"                    return "NOT";
+<djtag>"=="                     return "EQUALS";
+<djtag>"!="                     return "NOT_EQUALS";
+<djtag>">"                      return "GREATER_THAN";
+<djtag>"<"                      return "LESS_THAN";
+<djtag>">="                     return "GREATER_THAN_EQUALS";
+<djtag>"<="                     return "LESS_THAN_EQUALS";
+<djtag>"True"                   return "TRUE";
+<djtag>"False"                  return "FALSE";
+<djtag,var>":"                      return "COLON";
+<djtag,var>"|"                 return "PIPE";
+<djtag,var>\-?[0-9]+(?:\.[0-9]+)?   return "NUMBER";
+<djtag,var>\s+                      /* ignore */
+<djtag,var>"\""                     {
+                                  setState('doublequote', this);
+                                  return "BEG_DJTAG_QUOTE";
+                                }
+<doublequote>([^"\""])+         return "STRING_CONTENT";
+<doublequote>"\""               {
+                                  prevState(this);
+                                  return "END_DJTAG_QUOTE";
+                                }
+<djtag,var>"'"                      {
+                                  setState('singlequote', this);
+                                  return "BEG_DJTAG_QUOTE";
+                                }
+<singlequote>([^"'"])+          return "STRING_CONTENT";
+<singlequote>"'"                {
+                                  prevState(this);
+                                  return "END_DJTAG_QUOTE";
+                                }
+<INITIAL>"&#x"\d{4}";"          return "HTML_ENTITY";
+<INITIAL>"&"\w+";"              return "HTML_ENTITY";
+<tag,djtag>\w+                  return "WORD";
+<var>[\w"."]+                   return "WORD";
 <INITIAL>"\{"                   {
-                                  this.begin("escape");
+                                  setState('escape', this);
                                 }
 <escape>.                       {
-                                  this.begin("INITIAL");
+                                  prevState(this);
                                 }
 <<EOF>>                         return "EOF"
-<INITIAL>([^"<"\s])+            return "CONTENT"
+<INITIAL>([^<\s])+            return "CONTENT"
 
 %%

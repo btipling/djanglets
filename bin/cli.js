@@ -26,7 +26,8 @@ yy.ast = ast.createAst();
 djanglets.yy = yy;
 parsed = djanglets.parse(contents);
 result = yy.ast.valueOf();
-fileContent = "djanglets(" + JSON.stringify(result, null, 2) + ");";
+//console.log("result", JSON.stringify(result, null, 1));
+fileContent = "djanglets(" + JSON.stringify(result, null, 1) + ");";
 
 fs.writeFile(outFilename, fileContent, function(err) {
   if(err) {
